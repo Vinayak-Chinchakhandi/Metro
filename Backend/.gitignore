@@ -1,0 +1,5 @@
+node_modules/
+.env
+metro.db
+logs/
+*.log
