@@ -135,6 +135,7 @@ ai-service
 │   │
 │   ├── preprocessing
 │   │   ├── clean_stations.py
+│   │   ├── generate_fraud_dataset.py
 │   │   └── generate_demand_dataset.py
 │   │
 │   ├── schemas
