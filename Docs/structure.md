@@ -134,7 +134,8 @@ ai-service
 │   │   └── train_fraud_model.py
 │   │
 │   ├── preprocessing
-│   │   └── data_cleaning.py
+│   │   ├── clean_stations.py
+│   │   └── generate_demand_dataset.py
 │   │
 │   ├── schemas
 │   │   └── prediction_schema.py
@@ -166,11 +167,12 @@ Dataset
 datasets
 │
 ├── raw
-│   ├── passenger_flow.csv
-│   └── fraud_cases.csv
+│   ├── Namma_Metro_stations(Bengaluru).csv
+│   └── NammaMetro_Ridership_Dataset.csv
 │
 └── processed
     ├── demand_dataset.csv
+    ├── stations.csv
     └── fraud_dataset.csv
 ```
 
