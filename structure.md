@@ -54,6 +54,9 @@ frontend
 │   ├── styles
 │   │   └── global.css
 │   │
+│   ├── maps
+│   │   └── metroStations.js
+│   │
 │   ├── App.jsx
 │   └── main.jsx
 │
@@ -99,6 +102,9 @@ backend
 │   │   ├── errorHandler.js
 │   │   └── logger.js
 │   │
+│   ├── database
+│   │   └── queries.js   
+│   │
 │   ├── utils
 │   │   └── qrGenerator.js
 │   │
@@ -132,6 +138,9 @@ ai-service
 │   │
 │   ├── schemas
 │   │   └── prediction_schema.py
+│   │
+│   ├── utils
+│   │   └── model_loader.py
 │   │
 │   └── main.py
 │
