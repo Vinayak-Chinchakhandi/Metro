@@ -1,302 +1,424 @@
+
 # System Workflow – MetroMind AI
 
-This document explains how the different modules of the MetroMind AI system interact with each other.
-
-The system has four main layers:
-
-1. Frontend (React)
-2. Backend API (Node.js + Express)
-3. AI Service (Python + FastAPI)
-4. Database (SQLite)
-
-The backend acts as the central coordinator between all modules.
+This document explains how different modules of the **MetroMind AI** system interact with each other.
+The goal of this document is to act as a **development contract** between frontend, backend, and AI services so that different parts of the system can be developed independently and integrated smoothly.
 
 ---
 
-# High-Level Architecture
+# System Layers
 
-Frontend → Backend → AI Service → Database
+The MetroMind AI platform consists of four main layers:
 
-The frontend never directly communicates with the AI service or database.
+1. **Frontend – React**
+2. **Backend API – Node.js + Express**
+3. **AI Service – Python + FastAPI**
+4. **Database – SQLite**
 
-All requests go through the backend.
+The backend acts as the **central coordinator** between all modules.
+
+The frontend never communicates directly with the AI service or the database.  
+All requests pass through the backend.
+
+---
+
+# High‑Level Architecture
+
+```
+Frontend → Backend API → AI Service → Database
+```
+
+| Layer | Responsibility |
+|------|------|
+| Frontend | UI, dashboards, ticket booking |
+| Backend | APIs, business logic, validation |
+| AI Service | ML models for prediction and fraud detection |
+| Database | Persistent storage |
+
+---
+
+# Project Datasets
+
+## 1. Stations Dataset
+
+File
+
+```
+datasets/processed/stations.csv
+```
+
+| Column | Description |
+|------|------|
+| code | station code |
+| station | station name |
+| line | metro line |
+
+Used for:
+
+- station dropdowns
+- route selection
+- validation
+
+---
+
+## 2. Metro Network Dataset
+
+File
+
+```
+datasets/processed/metro_network.csv
+```
+
+| Column | Description |
+|------|------|
+| station_code | station identifier |
+| station_name | station name |
+| line | metro line |
+| sequence | station order |
+| is_interchange | interchange flag |
+| next_station_code | next station |
+| latitude | station latitude |
+| longitude | station longitude |
+| distance_to_next_km | distance to next station |
+
+Used for:
+
+- route distance calculation
+- travel time estimation
+- metro network map
+- fraud detection logic
+
+---
+
+## 3. Demand Prediction Dataset
+
+File
+
+```
+datasets/processed/demand_dataset.csv
+```
+
+| Column | Description |
+|------|------|
+| station | station name |
+| hour | hour |
+| day | weekday |
+| weather | weather condition |
+| event | special event indicator |
+| passenger_count | expected passengers |
+
+Used for demand prediction model.
+
+---
+
+## 4. Fraud Detection Dataset
+
+File
+
+```
+datasets/processed/fraud_dataset.csv
+```
+
+| Column | Description |
+|------|------|
+| ticket_id | ticket identifier |
+| entry_station | entry station |
+| exit_station | exit station |
+| entry_hour | entry hour |
+| travel_time | travel time |
+| ticket_type | QR / SmartCard / Token |
+| distance | travel distance |
+| repeat_usage | ticket reuse flag |
+| fraud_label | fraud indicator |
+
+Used for training fraud detection model.
 
 ---
 
 # Main Workflows
 
-## 1. Passenger Ticket Booking Flow
+---
 
-Step 1: User opens booking page.
+# 1. Passenger Ticket Booking Flow
 
-Frontend page:
+### Step 1: User Opens Booking Page
+
+Frontend page
+
+```
 BookTicket.jsx
+```
 
 User selects:
-- Source station
-- Destination station
-- Travel time
+
+- source station
+- destination station
+- travel time
 
 Frontend sends request to backend.
 
+API
+
+```
 POST /api/tickets/book
+```
 
-Example request:
+Example request
 
+```json
 {
-  "source": "MG Road",
-  "destination": "Indiranagar",
-  "time": "08:45"
+  "source_station": "Mahatma Gandhi Road",
+  "destination_station": "Indiranagar",
+  "travel_time": "08:45"
 }
+```
 
 ---
 
-Step 2: Backend receives booking request.
+### Step 2: Backend Processes Request
 
-Backend validates request data.
+Backend performs:
 
-Then backend calls AI service to predict congestion.
+- validation
+- route lookup
+- distance calculation using
 
+```
+metro_network.csv
+```
+
+Backend calls AI service:
+
+```
 POST /predict-demand
+```
 
-Example request sent to AI service:
+Example AI request
 
+```json
 {
-  "station": "MG Road",
-  "time": "08:45"
+  "station": "Mahatma Gandhi Road",
+  "hour": 8,
+  "day": "Monday",
+  "weather": "Clear",
+  "event": 0
 }
+```
 
 ---
 
-Step 3: AI Service predicts passenger demand.
+### Step 3: AI Predicts Demand
 
-Demand prediction model processes input.
+Example response
 
-Example response:
-
+```json
 {
   "predicted_demand": 1500,
   "crowd_level": "High"
 }
-
-Backend receives prediction.
+```
 
 ---
 
-Step 4: Backend generates ticket.
+### Step 4: Backend Generates Ticket
 
-Backend performs:
+Backend:
 
-- create ticket ID
-- generate QR code
-- store ticket in SQLite database
+- generates ticket ID
+- generates QR code
+- stores ticket in database
 
-Database table:
+Database table
+
+```
 tickets
+```
 
 ---
 
-Step 5: Backend returns ticket response.
+### Step 5: Backend Returns Ticket
 
-Example response:
+Example response
 
+```json
 {
   "ticket_id": "T1201",
-  "source": "MG Road",
-  "destination": "Indiranagar",
-  "time": "08:45",
+  "source_station": "Mahatma Gandhi Road",
+  "destination_station": "Indiranagar",
+  "travel_time": "08:45",
+  "distance": 4.8,
   "crowd_level": "High",
   "qr_code": "base64_image"
 }
+```
 
-Frontend displays ticket.
+Displayed in
 
-Page:
+```
 TicketResult.jsx
+```
 
 ---
 
 # 2. Fraud Detection Workflow
 
-Fraud detection runs when tickets are used or validated.
+### Step 1: Ticket Validation
 
-Step 1: Ticket validation request sent.
+Backend sends ticket data
 
-Backend sends ticket data to AI service.
-
+```
 POST /detect-fraud
+```
 
-Example request:
+Example request
 
+```json
 {
   "ticket_id": "T1201",
-  "entry_station": "MG Road",
+  "entry_station": "Mahatma Gandhi Road",
   "exit_station": "Indiranagar",
-  "entry_time": "08:45"
+  "entry_hour": 8,
+  "travel_time": 14,
+  "distance": 5.2,
+  "ticket_type": "QR",
+  "repeat_usage": 0
 }
+```
 
 ---
 
-Step 2: AI Fraud Model analyzes ticket behavior.
+### Step 2: AI Fraud Model Analysis
 
-Model detects anomalies such as:
+Model analyzes:
 
+- travel distance
+- travel duration
 - ticket reuse
-- impossible travel
-- abnormal travel frequency
+- abnormal travel patterns
 
-Example response:
+Example response
 
+```json
 {
   "fraud_probability": 0.82,
   "alert": true
 }
+```
 
 ---
 
-Step 3: Backend stores fraud alert.
+### Step 3: Store Fraud Alert
 
-If alert is true:
+Backend stores result in
 
-Backend stores record in database table:
-
+```
 fraud_alerts
+```
 
 ---
 
-Step 4: Admin dashboard displays alerts.
+### Step 4: Display in Admin Dashboard
 
-Frontend page:
+Frontend page
+
+```
 Dashboard.jsx
+```
 
-API request:
+API
 
+```
 GET /api/fraud-alerts
+```
 
-Fraud alerts displayed using FraudAlertCard component.
+Displayed using
+
+```
+FraudAlertCard.jsx
+```
 
 ---
 
 # 3. Demand Prediction Visualization
 
-Admin dashboard displays predicted congestion.
+### Step 1: Dashboard Request
 
-Step 1: Dashboard loads.
-
-Frontend requests predictions.
-
+```
 GET /api/predictions
+```
 
----
+### Step 2: Backend Retrieves Predictions
 
-Step 2: Backend retrieves predictions.
+From AI service or database.
 
-Predictions may come from:
+### Step 3: Backend Sends Response
 
-- AI service
-- stored predictions in database
-
----
-
-Step 3: Data sent to frontend.
-
-Example response:
-
+```json
 [
   {
-    "station": "MG Road",
+    "station": "Mahatma Gandhi Road",
     "predicted_demand": 1500,
     "crowd_level": "High"
   }
 ]
+```
 
----
+### Step 4: Visualization
 
-Step 4: Dashboard visualizes results.
+Components
 
-Charts:
-- passenger flow
-- congestion levels
-
-Components used:
+```
 PredictionCard.jsx
 StationCard.jsx
+```
 
 ---
 
 # 4. Metro Network Map Workflow
 
-Page:
+Frontend page
+
+```
 NetworkMap.jsx
+```
 
-Step 1: Map loads station coordinates.
+### Step 1: Load Station Coordinates
 
-Data source:
+Source
 
-maps/metroStations.js
+```
+metro_network.csv
+```
 
----
+### Step 2: Fetch Congestion Data
 
-Step 2: Backend provides congestion data.
-
+```
 GET /api/predictions
+```
+
+### Step 3: Update Map Markers
+
+| Color | Meaning |
+|------|------|
+| Green | Low demand |
+| Yellow | Medium demand |
+| Red | High demand |
 
 ---
 
-Step 3: Map markers update.
+# Database Tables
 
-Station colors:
-
-Green → Low demand  
-Yellow → Medium demand  
-Red → High demand
-
-This visualizes congestion across the metro network.
-
----
-
-# Database Interaction
-
-Database used:
-SQLite
-
-Tables:
-
-stations  
-tickets  
-predictions  
-fraud_alerts
-
-The backend performs all database operations.
+| Table | Purpose |
+|------|------|
+| stations | station list |
+| metro_network | metro topology |
+| tickets | booked tickets |
+| predictions | demand predictions |
+| fraud_alerts | fraud records |
 
 ---
 
-# Module Responsibilities
-
-Frontend:
-- UI
-- ticket booking interface
-- dashboard visualization
-- metro network map
-
-Backend:
-- API endpoints
-- business logic
-- QR code generation
-- database access
-- communication with AI service
-
-AI Service:
-- demand prediction model
-- fraud detection model
-- ML preprocessing
-
-Database:
-- persistent storage for system data
-
----
-
-# Integration Order (Recommended)
+# Integration Order
 
 1. Setup backend API
 2. Setup SQLite database
