@@ -18,7 +18,7 @@ exports.createTicket = (ticket) => {
         ticket.crowd_level
       ],
       (err) => {
-        if (err) reject(err);
+        if (err) return reject(err);
         resolve(ticket);
       }
     );

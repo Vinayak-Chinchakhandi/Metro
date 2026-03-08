@@ -1,10 +1,14 @@
 const ticketModel = require("../models/ticketModel");
 const aiService = require("./aiService");
-const qrGenerator = require("../utils/qrGenerator");
+const qrService = require("./qrService");
 
 exports.bookTicket = async (data) => {
 
   const { source, destination, time } = data;
+
+if (!source || !destination || !time) {
+  throw new Error("Missing ticket booking fields");
+}
 
   // Call AI demand prediction
   const prediction = await aiService.predictDemand(source, time);
@@ -21,7 +25,7 @@ exports.bookTicket = async (data) => {
     time
   };
 
-  const qrCode = await qrGenerator.generateQR(qrData);
+  const qrCode = await qrService.generateQR(qrData);
 
   const ticket = {
     id: ticketId,

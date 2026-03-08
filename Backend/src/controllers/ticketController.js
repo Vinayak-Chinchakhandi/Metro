@@ -13,9 +13,7 @@ exports.bookTicket = async (req, res) => {
 
   } catch (err) {
 
-    console.error("ERROR:", err);
-
-    res.status(500).json({ error: err.message });
+    next(err);
 
   }
 };
