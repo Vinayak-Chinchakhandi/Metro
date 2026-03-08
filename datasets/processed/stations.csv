@@ -1,64 +1,84 @@
 station,line,code
 Attiguppe,Purple Line,AGPP
+BTM Layout,Yellow Line,BTML
 Baiyappanahalli,Purple Line,BYPL
 Banashankari,Green Line,BSNK
-Krantivira Sangolli Rayanna Railway Station,Purple Line,SRCS
+Benniganahalli,Purple Line,BENN
+Beratena Agrahara,Yellow Line,BTAG
+Biocon Hebbagodi,Yellow Line,BIOC
+Bommanahalli,Yellow Line,BOMN
+Central Silk Board,Yellow Line,CSBR
+Challaghatta,Purple Line,CHLG
 Chickpete,Green Line,CKPE
+Chikkabidarakallu,Green Line,CKBL
 Cubbon Park,Purple Line,CBPK
 Dasarahalli,Green Line,DSH
 Deepanjali Nagar,Purple Line,DJNR
+Delta Electronics Bommasandra,Yellow Line,DELT
 Doddakallasandra,Green Line,KLPK
+Dr B R Ambedkar Station Vidhana Soudha,Purple Line,VDSA
+Electronic City,Yellow Line,ELCT
 Garudacharapalya,Purple Line,GDCP
 Goraguntepalya,Green Line,YPI
 Halasuru,Purple Line,HLRU
+Hongasandra,Yellow Line,HONG
 Hoodi,Purple Line,DKIA
 Hopefarm Channasandra,Purple Line,UWVL
-"Sri Balagangadharanatha Swamiji Station, Hosahalli",Purple Line,HSLI
+Hosa Road,Yellow Line,HSRD
+Huskur Road,Yellow Line,HUSK
 Indiranagar,Purple Line,IDN
+Infosys Foundation Konappana Agrahara,Yellow Line,INFO
 Jalahalli,Green Line,JLHL
+Jayadeva Hospital,Yellow Line,JDEV
 Jayanagar,Green Line,JYN
 Jayaprakash Nagar,Green Line,JPN
 Jnanabharathi,Purple Line,BGUC
 Kadugodi Tree Park,Purple Line,KDGD
-Krishna Rajendra Market,Green Line,KRMT
-Krishnarajapuram (K.R.Puram),Purple Line,KRAM
 Kengeri,Purple Line,KGIT
 Kengeri Bus Terminal,Purple Line,MLSD
 Konanakunte Cross,Green Line,APRC
+Krantivira Sangolli Rayanna Railway Station,Purple Line,SRCS
+Krishna Rajendra Market,Green Line,KRMT
+Krishnarajapura,Purple Line,KRAM
+Kudlu Gate,Yellow Line,KUDG
 Kundalahalli,Purple Line,KDNH
 Lalbagh,Green Line,LBGH
+Madavara,Green Line,MDVA
 Magadi Road,Purple Line,MIRD
-Mahalakshmi,Green Line,MHLI
 Mahakavi Kuvempu Road,Green Line,KVPR
-"Nadaprabhu Kempegowda Station, Majestic",Purple Line,KGWA
+Mahalakshmi,Green Line,MHLI
 Mahatma Gandhi Road,Purple Line,MAGR
-Mysore Road,Purple Line,MYRD
+Manjunath Nagar,Green Line,MJNN
+Mantri Square Sampige Road,Green Line,SPGD
+Mysuru Road,Purple Line,MYRD
+Nadaprabhu Kempegowda Station Majestic,Purple Line,KGWA
 Nagasandra,Green Line,NGSA
 Nallurhalli,Purple Line,VDHP
 National College,Green Line,NLC
-Pantharapalya - Nayandahalli,Purple Line,NYHM
+Pantharapalya Nayandahalli,Purple Line,NYHM
 Pattanagere,Purple Line,PATG
 Pattandur Agrahara,Purple Line,ITPL
 Peenya,Green Line,PEYA
 Peenya Industry,Green Line,PYID
+Ragigudda,Yellow Line,RAGI
 Rajajinagar,Green Line,RJNR
 Rajarajeshwari Nagar,Purple Line,RRRN
 Rashtreeya Vidyalaya Road,Green Line,RVR
-Mantri Square Sampige Road,Green Line,SPGD
 Sandal Soap Factory,Green Line,SSFY
 Seetharampalya,Purple Line,VWIA
-Singayyanapalya,Purple Line,MDVP
 Silk Institute,Green Line,APTS
-"Sir.M.Visvesvaraya Stn., Central College",Purple Line,VSWA
-Swami Vivekananda Road,Purple Line,SVRD
+Singasandra,Yellow Line,SING
+Singayyanapalya,Purple Line,MDVP
+Sir M Visvesvaraya Central College,Purple Line,VSWA
 South End Circle,Green Line,SECE
-Srirampura,Green Line,SPRU
+Sri Balagangadharanatha Swamiji Hosahalli,Purple Line,HSLI
 Sri Sathya Sai Hospital,Purple Line,SSHP
+Srirampura,Green Line,SPRU
+Swami Vivekananda Road,Purple Line,SVRD
 Thalaghattapura,Green Line,TGTP
 Trinity,Purple Line,TTY
 Vajarahalli,Green Line,VJRH
-"Dr. B. R. Ambedkar Station, Vidhana Soudha",Purple Line,VDSA
 Vijayanagar,Purple Line,VJN
+Whitefield (Kadugodi),Purple Line,WHTM
 Yelachenahalli,Green Line,PUTH
 Yeshwanthpur,Green Line,YPM
-Whitefield (Kadugodi),Purple Line,WHTM
