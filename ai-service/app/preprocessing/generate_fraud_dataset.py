@@ -1,27 +1,25 @@
 import pandas as pd
 import random
 import uuid
-from datetime import datetime, timedelta
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parents[3]
 
 stations_path = BASE_DIR / "datasets" / "processed" / "stations.csv"
-creditcard_path = BASE_DIR / "datasets" / "raw" / "creditcard.csv"
+network_path = BASE_DIR / "datasets" / "processed" / "metro_network.csv"
 output_path = BASE_DIR / "datasets" / "processed" / "fraud_dataset.csv"
 
 stations = pd.read_csv(stations_path)
-fraud_source = pd.read_csv(creditcard_path)
+network = pd.read_csv(network_path)
 
 station_list = stations["station"].tolist()
 
-fraud_ratio = fraud_source["Class"].mean()
-
-print("Fraud ratio learned from dataset:", fraud_ratio)
+TOTAL_ROWS = 5000
+FRAUD_RATIO = 0.20
 
 rows = []
 
-for i in range(5000):
+for i in range(TOTAL_ROWS):
 
     entry_station = random.choice(station_list)
     exit_station = random.choice(station_list)
@@ -30,25 +28,40 @@ for i in range(5000):
         exit_station = random.choice(station_list)
 
     entry_hour = random.randint(5, 23)
-    travel_minutes = random.randint(2, 45)
 
-    entry_time = datetime(2024, 1, 1, entry_hour, random.randint(0, 59))
-    exit_time = entry_time + timedelta(minutes=travel_minutes)
+    # realistic metro distance
+    distance = round(random.uniform(2, 25), 2)
+
+    # normal travel time calculation
+    normal_time = (distance / 35) * 60
+    normal_time = int(normal_time + random.randint(-3, 3))
 
     ticket_type = random.choice(["QR", "SmartCard", "Token"])
 
-    distance = round(random.uniform(1.0, 25.0), 2)
+    fraud_label = 0
+    repeat_usage = 0
+    travel_time = normal_time
 
-    fraud_label = 1 if random.random() < fraud_ratio else 0
+    if random.random() < FRAUD_RATIO:
 
-    repeat_usage = 1 if random.random() < 0.05 else 0
+        fraud_label = 1
+        fraud_type = random.choice(["reuse", "impossible_time", "slow_travel"])
+
+        if fraud_type == "reuse":
+            repeat_usage = 1
+
+        elif fraud_type == "impossible_time":
+            travel_time = random.randint(1, 3)
+
+        elif fraud_type == "slow_travel":
+            travel_time = normal_time + random.randint(40, 80)
 
     rows.append({
         "ticket_id": str(uuid.uuid4())[:8],
         "entry_station": entry_station,
         "exit_station": exit_station,
         "entry_hour": entry_hour,
-        "travel_time": travel_minutes,
+        "travel_time": travel_time,
         "ticket_type": ticket_type,
         "distance": distance,
         "repeat_usage": repeat_usage,
@@ -61,4 +74,4 @@ df.to_csv(output_path, index=False)
 
 print("Fraud dataset generated successfully")
 print("Total rows:", len(df))
-print("Saved to:", output_path)
+print("Fraud rows:", df["fraud_label"].sum())
