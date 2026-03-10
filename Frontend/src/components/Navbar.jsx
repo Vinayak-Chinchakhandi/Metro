@@ -1,77 +1,110 @@
 import { NavLink } from "react-router-dom";
+import { useState } from "react";
 
 function Navbar() {
 
-  const baseLink =
-    "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200";
-
-  const activeLink =
-    "bg-white text-blue-700 shadow";
-
-  const normalLink =
-    "text-white hover:bg-blue-600";
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-blue-700 shadow-md">
-
-      <div className="max-w-7xl mx-auto px-8">
-
-        <div className="flex items-center justify-between h-16">
-
-          {/* LOGO */}
-
-          <div className="flex items-center space-x-2 text-white font-bold text-xl">
-            <span className="text-2xl">🚇</span>
-            <span>MetroMind AI</span>
-          </div>
-
-          {/* NAV LINKS */}
-
-          <div className="flex items-center space-x-6">
-
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `${baseLink} ${isActive ? activeLink : normalLink}`
-              }
-            >
-              Home
-            </NavLink>
-
-            <NavLink
-              to="/book"
-              className={({ isActive }) =>
-                `${baseLink} ${isActive ? activeLink : normalLink}`
-              }
-            >
-              Book Ticket
-            </NavLink>
-
-            <NavLink
-              to="/dashboard"
-              className={({ isActive }) =>
-                `${baseLink} ${isActive ? activeLink : normalLink}`
-              }
-            >
-              Dashboard
-            </NavLink>
-
-            <NavLink
-              to="/map"
-              className={({ isActive }) =>
-                `${baseLink} ${isActive ? activeLink : normalLink}`
-              }
-            >
-              Metro Map
-            </NavLink>
-
-          </div>
-
+    <header className="navbar">
+      <div className="navbar-inner">
+        <div className="navbar-brand">
+          <div className="navbar-logo">🚇</div>
+          <div className="navbar-title">MetroMind AI</div>
         </div>
 
+        <nav className="nav-links" aria-label="Main navigation">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `nav-link ${isActive ? "nav-link-active" : ""}`
+            }
+          >
+            Home
+          </NavLink>
+
+          <NavLink
+            to="/book"
+            className={({ isActive }) =>
+              `nav-link ${isActive ? "nav-link-active" : ""}`
+            }
+          >
+            Book Ticket
+          </NavLink>
+
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              `nav-link ${isActive ? "nav-link-active" : ""}`
+            }
+          >
+            Dashboard
+          </NavLink>
+
+          <NavLink
+            to="/map"
+            className={({ isActive }) =>
+              `nav-link ${isActive ? "nav-link-active" : ""}`
+            }
+          >
+            Metro Map
+          </NavLink>
+        </nav>
+
+        <button
+          className="navbar-toggle"
+          type="button"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-expanded={menuOpen}
+        >
+          Menu
+        </button>
       </div>
 
-    </nav>
+      {menuOpen && (
+        <nav className="navbar-mobile" aria-label="Mobile navigation">
+          <NavLink
+            to="/"
+            onClick={() => setMenuOpen(false)}
+            className={({ isActive }) =>
+              `nav-link ${isActive ? "nav-link-active" : ""}`
+            }
+          >
+            Home
+          </NavLink>
+
+          <NavLink
+            to="/book"
+            onClick={() => setMenuOpen(false)}
+            className={({ isActive }) =>
+              `nav-link ${isActive ? "nav-link-active" : ""}`
+            }
+          >
+            Book Ticket
+          </NavLink>
+
+          <NavLink
+            to="/dashboard"
+            onClick={() => setMenuOpen(false)}
+            className={({ isActive }) =>
+              `nav-link ${isActive ? "nav-link-active" : ""}`
+            }
+          >
+            Dashboard
+          </NavLink>
+
+          <NavLink
+            to="/map"
+            onClick={() => setMenuOpen(false)}
+            className={({ isActive }) =>
+              `nav-link ${isActive ? "nav-link-active" : ""}`
+            }
+          >
+            Metro Map
+          </NavLink>
+        </nav>
+      )}
+    </header>
   );
 }
 

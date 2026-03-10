@@ -1,34 +1,53 @@
-import { useState } from "react";
-import { STATIONS } from "../utils/constants";
+import { useState, useEffect } from "react";
+import { getStations } from "../services/api";
 import { predictDemand } from "../services/predictionService";
 
 function TicketForm({ onSubmit }) {
-
   const [form, setForm] = useState({
     source: "",
     destination: "",
-    time: ""
+    time: "",
   });
 
+  const [stations, setStations] = useState([]);
+  const [loadingStations, setLoadingStations] = useState(true);
+  const [stationsError, setStationsError] = useState(null);
   const [prediction, setPrediction] = useState(null);
 
-  const handleChange = async (e) => {
+  const loadStations = async () => {
+    setLoadingStations(true);
+    setStationsError(null);
 
+    try {
+      const response = await getStations();
+      setStations(response.data);
+    } catch (error) {
+      console.error("Error fetching stations:", error);
+      setStationsError("Failed to load stations. Please try again.");
+    } finally {
+      setLoadingStations(false);
+    }
+  };
+
+  useEffect(() => {
+    loadStations();
+  }, []);
+
+  const handleChange = async (e) => {
     const updated = {
       ...form,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     };
 
     setForm(updated);
 
     // Run prediction when source and time are selected
     if (updated.source && updated.time) {
-
       const hour = updated.time.split(":")[0];
 
       const result = await predictDemand({
         station: updated.source,
-        hour: parseInt(hour)
+        hour: parseInt(hour),
       });
 
       setPrediction(result);
@@ -47,114 +66,116 @@ function TicketForm({ onSubmit }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white shadow-lg rounded-xl p-6 max-w-md mx-auto space-y-5"
-    >
-
+    <form onSubmit={handleSubmit} className="ticket-form space-y-6">
       {/* Source */}
 
-      <div>
-        <label className="block font-semibold mb-1">
-          Source Station
-        </label>
+      <div className="form-group">
+        <label>Source Station</label>
 
-        <select
-          name="source"
-          value={form.source}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-        >
-
-          <option value="">Select Source</option>
-
-          {STATIONS.map((s, i) => (
-            <option key={i} value={s}>
-              {s}
+        {stationsError ? (
+          <div className="error-block">
+            <p className="text-red-600">{stationsError}</p>
+            <button type="button" onClick={loadStations} className="mt-2 underline">
+              Retry
+            </button>
+          </div>
+        ) : (
+          <select
+            name="source"
+            value={form.source}
+            onChange={handleChange}
+            required
+            disabled={loadingStations}
+          >
+            <option value="">
+              {loadingStations ? "Loading stations..." : "Select Source Station"}
             </option>
-          ))}
 
-        </select>
+            {stations.map((station) => (
+              <option key={station.id} value={station.name}>
+                {station.name}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       {/* Destination */}
 
-      <div>
-        <label className="block font-semibold mb-1">
-          Destination Station
-        </label>
+      <div className="form-group">
+        <label>Destination Station</label>
 
-        <select
-          name="destination"
-          value={form.destination}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-        >
-
-          <option value="">Select Destination</option>
-
-          {STATIONS.map((s, i) => (
-            <option key={i} value={s}>
-              {s}
+        {stationsError ? (
+          <div className="error-block">
+            <p className="text-red-600">{stationsError}</p>
+            <button type="button" onClick={loadStations} className="mt-2 underline">
+              Retry
+            </button>
+          </div>
+        ) : (
+          <select
+            name="destination"
+            value={form.destination}
+            onChange={handleChange}
+            required
+            disabled={loadingStations}
+          >
+            <option value="">
+              {loadingStations ? "Loading stations..." : "Select Destination Station"}
             </option>
-          ))}
 
-        </select>
+            {stations.map((station) => (
+              <option key={station.id} value={station.name}>
+                {station.name}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       {/* Time */}
 
-      <div>
-        <label className="block font-semibold mb-1">
-          Travel Time
-        </label>
+      <div className="form-group">
+        <label>Travel Time</label>
 
         <input
           type="time"
           name="time"
           value={form.time}
           onChange={handleChange}
-          className="w-full border p-2 rounded"
+          required
         />
       </div>
 
       {/* Congestion Indicator */}
 
       {prediction && (
-
-        <div className="p-3 rounded bg-gray-100">
-
-          <p className="font-semibold">
-            Predicted Demand: {prediction.predicted_demand}
-          </p>
-
+        <div className="prediction-card">
           <p>
-            Crowd Level:
+            <strong>Predicted Demand:</strong> {prediction.predicted_demand}{" "}
+            passengers
+          </p>
+          <p>
+            <strong>Crowd Level:</strong>
             <span
               className={
                 prediction.crowd_level === "High"
-                  ? "text-red-600 font-bold"
+                  ? "crowd-high"
                   : prediction.crowd_level === "Medium"
-                  ? "text-yellow-600 font-bold"
-                  : "text-green-600 font-bold"
+                    ? "crowd-medium"
+                    : "crowd-low"
               }
             >
-              {" "}{prediction.crowd_level}
+              {" "}
+              {prediction.crowd_level}
             </span>
           </p>
-
         </div>
-
       )}
 
       {/* Submit */}
 
-      <button
-        className="w-full bg-blue-600 text-white py-2 rounded"
-      >
-        Generate Ticket
-      </button>
-
+      <button type="submit">🚇 Generate Ticket</button>
     </form>
   );
 }
