@@ -19,8 +19,10 @@ const ticketRoutes = require("./routes/ticketRoutes");
 const stationRoutes = require("./routes/stationRoutes");
 const fraudRoutes = require("./routes/fraudRoutes");
 const predictionRoutes = require("./routes/predictionRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 
+app.use("/api/admin", adminRoutes);
 app.use("/api/tickets", ticketRoutes);
 app.use("/api/stations", stationRoutes);
 app.use("/api/fraud-alerts", fraudRoutes);

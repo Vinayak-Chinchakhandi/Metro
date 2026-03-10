@@ -29,8 +29,8 @@ exports.bookTicket = async (req, res) => {
 
     console.error("Ticket Booking Error:", error);
 
-    return res.status(500).json({
-      error: "Internal server error"
+    return res.status(400).json({
+      error: error.message
     });
   }
 };
