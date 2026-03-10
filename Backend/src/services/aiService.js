@@ -1,36 +1,98 @@
 const axios = require("axios");
 const { AI_SERVICE_URL } = require("../config/env");
 
+
+/*
+----------------------------------------
+DEMAND PREDICTION
+----------------------------------------
+*/
 exports.predictDemand = async (station, time) => {
 
-  const now = new Date()
+  try {
 
-  const hour = parseInt(time.split(":")[0])
+    const now = new Date();
 
-  const day = now.toLocaleString("en-US", { weekday: "long" })
+    // Extract hour from HH:MM
+    const hour = parseInt(time.split(":")[0]);
 
-  const weatherOptions = ["Clear","Cloudy","Rain"]
+    // Get current day
+    const day = now.toLocaleString("en-US", { weekday: "long" });
 
-  const weather = weatherOptions[Math.floor(Math.random()*3)]
+    // Simulated weather (until real API added)
+    const weatherOptions = ["Clear", "Cloudy", "Rain"];
+    const weather = weatherOptions[Math.floor(Math.random() * weatherOptions.length)];
 
-  const event = (day === "Saturday" || day === "Sunday") ? 1 : 0
+    // Weekend event simulation
+    const event = (day === "Saturday" || day === "Sunday") ? 1 : 0;
 
-  const res = await axios.post(`${AI_SERVICE_URL}/predict-demand`, {
+    const payload = {
+      station,
+      hour,
+      day,
+      weather,
+      event
+    };
 
-    station,
-    hour,
-    day,
-    weather,
-    event
+    const response = await axios.post(
+      `${AI_SERVICE_URL}/predict-demand`,
+      payload,
+      { timeout: 5000 }
+    );
 
-  })
+    return response.data;
 
-  return res.data
-}
+  } catch (error) {
 
-exports.detectFraud = async (ticketData) => {
+    console.error("AI Demand Prediction Error:", error.response?.data || error.message);
 
-  const res = await axios.post(`${AI_SERVICE_URL}/detect-fraud`, ticketData);
+    throw new Error("Failed to fetch demand prediction from AI service");
 
-  return res.data;
+  }
+
+};
+
+
+
+/*
+----------------------------------------
+FRAUD DETECTION
+----------------------------------------
+*/
+exports.detectFraud = async ({ entry_station, exit_station, travel_time, distance }) => {
+  
+  try {
+
+    const payload = {
+
+      entry_station: entry_station,
+      exit_station: exit_station,
+
+      entry_hour: new Date().getHours(),
+
+      travel_time: travel_time,
+
+      ticket_type: "QR",
+
+      distance: distance,
+
+      repeat_usage: 0
+    };
+
+    const response = await axios.post(
+      `${AI_SERVICE_URL}/detect-fraud`,
+      payload,
+      { timeout: 5000 }
+    );
+
+    return response.data;
+
+  } catch (error) {
+
+    console.error("AI Fraud Detection Error:", error.response?.data || error.message);
+
+    throw new Error("Failed to detect fraud from AI service");
+
+  }
+
 };
