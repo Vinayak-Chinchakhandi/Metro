@@ -53,7 +53,7 @@ exports.bookTicket = async (data) => {
     id: ticketId,
     source,
     destination,
-    time,
+    booking_time: new Date().toISOString(),
     crowd_level,
     qr_code: qrCode
   };
@@ -130,7 +130,6 @@ exports.entryScan = async ({ ticket_id, entry_station }) => {
 // EXIT SCAN + FRAUD DETECTION
 exports.exitScan = async ({ ticket_id, exit_station }) => {
 
-  // 1️⃣ Check ticket exists
   const ticket = await ticketModel.getTicketById(ticket_id);
 
   if (!ticket) {
@@ -144,7 +143,6 @@ exports.exitScan = async ({ ticket_id, exit_station }) => {
     };
   }
 
-  // 2️⃣ Check entry recorded
   const entry = await ticketModel.getActiveEntry(ticket_id);
 
   if (!entry) {
@@ -154,58 +152,79 @@ exports.exitScan = async ({ ticket_id, exit_station }) => {
     };
   }
 
-  // 3️⃣ Calculate travel time
-  const entryTime = new Date(entry.entry_time);
-  const exitTime = new Date();
-
-  const travelTime = Math.floor((exitTime - entryTime) / 60000);
-
-  // 4️⃣ Calculate distance using metro network
   const distance = await ticketModel.calculateDistance(
     entry.entry_station,
     exit_station
   );
 
-  // 5️⃣ Update ticket_validations table
   await ticketModel.updateExitValidation(
     ticket_id,
     exit_station,
-    travelTime,
     distance
   );
 
-  // 6️⃣ Update tickets table (store travel time)
+  const trip = await ticketModel.getCompletedTrip(ticket_id);
+
+  const travelTime = trip.travel_time;
+
   await ticketModel.updateTicketTravelTime(ticket_id, travelTime);
 
-  // 7️⃣ Run AI fraud detection
+  const expectedTime = (distance / 35) * 3600;
+
+  let backendFlag = false;
+  let backendReason = null;
+
+  if (travelTime < expectedTime * 0.3) {
+    backendFlag = true;
+    backendReason = "Impossible travel time";
+  }
+
+  if (travelTime > expectedTime * 4) {
+    backendFlag = true;
+    backendReason = "Unusually slow travel";
+  }
+
   const fraudResult = await aiService.detectFraud({
     entry_station: entry.entry_station,
     exit_station: exit_station,
-    entry_hour: entryTime.getHours(),
+    entry_hour: new Date(entry.entry_time).getHours(),
     travel_time: travelTime,
     ticket_type: "QR",
     distance: distance,
-    repeat_usage: 0
+    repeat_usage: 0,
+    expected_time: expectedTime
   });
 
-  // 8️⃣ Save fraud alert if detected
-  if (fraudResult.alert) {
+  let finalAlert = fraudResult.alert;
+  let finalReason = fraudResult.reason;
+
+  if (backendFlag) {
+    finalAlert = true;
+    finalReason = backendReason;
+  }
+
+  if (finalAlert) {
     await fraudModel.createAlert({
-      ticket_id: ticket_id,
+      ticket_id,
       fraud_probability: fraudResult.fraud_probability,
-      reason: fraudResult.reason
+      reason: finalReason
     });
   }
 
-  // 9️⃣ Return response
   return {
     status: "exit recorded",
     ticket_id,
     entry_station: entry.entry_station,
     exit_station,
     distance_km: distance,
-    travel_time_minutes: travelTime,
-    fraud_analysis: fraudResult
+    travel_time_seconds: travelTime,
+    travel_time_minutes: Math.round(travelTime / 60),
+    expected_time_seconds: Math.round(expectedTime),
+    fraud_analysis: {
+      ...fraudResult,
+      backend_flag: backendFlag,
+      backend_reason: backendReason
+    }
   };
 
 };

@@ -18,3 +18,4 @@ class FraudDetectionRequest(BaseModel):
     ticket_type: str
     distance: float
     repeat_usage: int
+    expected_time: float

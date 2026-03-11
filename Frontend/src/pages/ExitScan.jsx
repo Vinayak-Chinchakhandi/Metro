@@ -5,6 +5,8 @@ import QRScanner from "../components/QRScanner";
 function ExitScan() {
 
   const [result, setResult] = useState(null);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
 
   const handleScan = async (data) => {
 
@@ -12,16 +14,31 @@ function ExitScan() {
 
       const qrData = JSON.parse(data);
 
-      const result = await exitScan({
+      const res = await exitScan({
         ticket_id: qrData.ticketId,
         exit_station: qrData.destination
       });
 
-      setResult(result);
+      setResult(res);
+      setMessage("Journey completed successfully");
+      setMessageType("success");
+
+      if (res.fraud_analysis.alert) {
+        setMessage("⚠ Security Alert: " + res.fraud_analysis.reason);
+        setMessageType("warning");
+      }
 
     } catch (err) {
 
       console.error(err);
+
+      if (err.response?.data?.message) {
+        setMessage(err.response.data.message);
+      } else {
+        setMessage("Exit scan failed");
+      }
+
+      setMessageType("error");
 
     }
 
@@ -38,6 +55,20 @@ function ExitScan() {
         </h2>
 
         <QRScanner onScan={handleScan} />
+
+        {message && (
+          <div
+            className={`mt-4 p-3 rounded text-sm font-medium ${
+              messageType === "error"
+                ? "bg-red-100 text-red-700"
+                : messageType === "warning"
+                ? "bg-yellow-100 text-yellow-700"
+                : "bg-green-100 text-green-700"
+            }`}
+          >
+            {message}
+          </div>
+        )}
 
         {result && (
 

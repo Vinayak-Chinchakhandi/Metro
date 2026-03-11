@@ -1,8 +1,19 @@
-function StationCard({ station }) {
+function StationCard({ station, prediction }) {
+
+  const getBorderColor = () => {
+
+    if (!prediction) return "border-gray-300";
+
+    if (prediction.crowd_level === "Low") return "border-green-500";
+    if (prediction.crowd_level === "Medium") return "border-orange-400";
+    if (prediction.crowd_level === "High") return "border-red-500";
+
+    return "border-gray-300";
+  };
 
   return (
 
-    <div className="bg-white p-4 rounded shadow border-l-4 border-green-500">
+    <div className={`bg-white p-4 rounded shadow border-l-4 ${getBorderColor()}`}>
 
       <h3 className="font-bold mb-2">
         Station Info
@@ -19,6 +30,20 @@ function StationCard({ station }) {
       <p>
         <strong>Code:</strong> {station.code}
       </p>
+
+      {prediction && (
+        <>
+          <hr className="my-2" />
+
+          <p>
+            <strong>Predicted Demand:</strong> {prediction.predicted_demand}
+          </p>
+
+          <p>
+            <strong>Crowd Level:</strong> {prediction.crowd_level}
+          </p>
+        </>
+      )}
 
     </div>
 

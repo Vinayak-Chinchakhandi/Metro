@@ -5,6 +5,7 @@ import QRScanner from "../components/QRScanner";
 function EntryScan() {
 
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
 
   const handleScan = async (data) => {
 
@@ -18,12 +19,19 @@ function EntryScan() {
       });
 
       setMessage(result.status);
+      setMessageType("success");
 
     } catch (err) {
 
       console.error(err);
-      setMessage("Entry scan failed");
 
+      if (err.response?.data?.message) {
+        setMessage(err.response.data.message);
+      } else {
+        setMessage("Entry scan failed");
+      }
+
+      setMessageType("error");
     }
 
   };
@@ -41,7 +49,17 @@ function EntryScan() {
         <QRScanner onScan={handleScan} />
 
         {message && (
-          <p className="mt-4 text-green-600">{message}</p>
+
+          <div
+            className={`mt-4 p-3 rounded text-sm font-medium ${
+              messageType === "error"
+                ? "bg-red-100 text-red-700"
+                : "bg-green-100 text-green-700"
+            }`}
+          >
+            {message}
+          </div>
+
         )}
 
       </div>

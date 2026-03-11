@@ -12,8 +12,10 @@ function TicketForm() {
     const [destination, setDestination] = useState("");
     const [time, setTime] = useState("");
 
-    const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const [message, setMessage] = useState("");
+    const [messageType, setMessageType] = useState("");
 
 
     // Set default time
@@ -40,7 +42,8 @@ function TicketForm() {
         } catch (err) {
 
             console.error("Error loading stations", err);
-            setError("Failed to load stations");
+            setMessage("Failed to load stations");
+            setMessageType("error");
 
         } finally {
 
@@ -54,10 +57,11 @@ function TicketForm() {
     const handleSubmit = async (e) => {
 
         e.preventDefault();
-        setError("");
+        setMessage("");
 
         if (source === destination) {
-            setError("Source and destination cannot be the same");
+            setMessage("Source and destination cannot be the same");
+            setMessageType("error");
             return;
         }
 
@@ -71,6 +75,9 @@ function TicketForm() {
                 time
             });
 
+            setMessage("Ticket booked successfully");
+            setMessageType("success");
+            
             navigate("/ticket", { state: ticket });
 
         } catch (err) {
@@ -78,9 +85,11 @@ function TicketForm() {
             console.error("Booking failed", err);
 
             if (err.response?.data?.error) {
-                setError(err.response.data.error);
+                setMessage(err.response.data.error);
+                setMessageType("error");
             } else {
-                setError("Booking failed. Please try again.");
+                setMessage("Booking failed. Please try again.");
+                setMessageType("error");
             }
 
         } finally {
@@ -101,9 +110,16 @@ function TicketForm() {
             </h2>
 
 
-            {error && (
-                <div className="bg-red-100 text-red-700 p-2 mb-4 rounded">
-                    {error}
+            {message && (
+                <div
+                    className={`p-3 mb-4 rounded text-sm font-medium ${messageType === "error"
+                            ? "bg-red-100 text-red-700"
+                            : messageType === "success"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-yellow-100 text-yellow-700"
+                        }`}
+                >
+                    {message}
                 </div>
             )}
 
@@ -125,7 +141,7 @@ function TicketForm() {
                         onChange={(e) => {
                             setSource(e.target.value);
                             setDestination("");
-                            setError("");
+                            setMessage("");
                         }}
                         required
                     >
@@ -159,7 +175,7 @@ function TicketForm() {
                         disabled={!source || stationLoading}
                         onChange={(e) => {
                             setDestination(e.target.value);
-                            setError("");
+                            setMessage("");
                         }}
                         required
                     >
@@ -195,7 +211,7 @@ function TicketForm() {
                         value={time}
                         onChange={(e) => {
                             setTime(e.target.value);
-                            setError("");
+                            setMessage("");
                         }}
                         required
                     />

@@ -59,24 +59,19 @@ exports.predictDemand = async (station, time) => {
 FRAUD DETECTION
 ----------------------------------------
 */
-exports.detectFraud = async ({ entry_station, exit_station, travel_time, distance }) => {
+exports.detectFraud = async ({ entry_station, exit_station, entry_hour, travel_time, ticket_type, distance, repeat_usage, expected_time }) => {
   
   try {
 
     const payload = {
-
-      entry_station: entry_station,
-      exit_station: exit_station,
-
-      entry_hour: new Date().getHours(),
-
-      travel_time: travel_time,
-
-      ticket_type: "QR",
-
-      distance: distance,
-
-      repeat_usage: 0
+      entry_station,
+      exit_station,
+      entry_hour,
+      travel_time,
+      ticket_type,
+      distance,
+      repeat_usage,
+      expected_time
     };
 
     const response = await axios.post(

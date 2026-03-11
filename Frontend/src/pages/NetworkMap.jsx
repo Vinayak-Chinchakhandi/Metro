@@ -1,10 +1,27 @@
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import metroStations from "../maps/metroStations";
 import "leaflet/dist/leaflet.css";
+import { usePredictions } from "../hooks/usePredictions";
+import { CircleMarker } from "react-leaflet";
+import L from "leaflet";
+
+// Fix default marker issue
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+});
 
 function NetworkMap() {
 
   const center = [12.9716, 77.5946]; // Bangalore center
+
+  const predictions = usePredictions();
 
   /*
   ----------------------------------------
@@ -49,6 +66,54 @@ function NetworkMap() {
     if (l.includes("yellow")) return "gold";
 
     return "blue";
+
+  };
+
+  const getStationColor = (stationName) => {
+
+    const prediction = predictions.find(
+      (p) => p.station === stationName
+    );
+
+    if (!prediction) return "blue";
+
+    if (prediction.crowd_level === "Low") return "green";
+    if (prediction.crowd_level === "Medium") return "orange";
+    if (prediction.crowd_level === "High") return "red";
+
+    return "blue";
+  };
+
+  const getStationIcon = (stationName) => {
+
+    const prediction = predictions.find(
+      (p) => p.station === stationName
+    );
+
+    let iconUrl =
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png";
+
+    if (prediction) {
+
+      if (prediction.crowd_level === "Medium")
+        iconUrl =
+          "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png";
+
+      if (prediction.crowd_level === "High")
+        iconUrl =
+          "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png";
+
+    }
+
+    return new L.Icon({
+      iconUrl,
+      shadowUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
 
   };
 
@@ -104,11 +169,13 @@ function NetworkMap() {
           {metroStations.map((station) => (
 
             <Marker
-              key={station.code}
+              key={`${station.code}-${station.sequence}`}
               position={[
                 Number(station.latitude),
                 Number(station.longitude)
               ]}
+
+              icon={getStationIcon(station.name)}
             >
 
               <Popup>

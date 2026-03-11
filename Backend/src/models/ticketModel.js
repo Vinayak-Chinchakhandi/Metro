@@ -38,7 +38,7 @@ exports.createTicket = (ticket) => {
         ticket.id,
         ticket.source,
         ticket.destination,
-        ticket.time,
+        ticket.booking_time,
         ticket.crowd_level,
         ticket.qr_code
       ],
@@ -128,7 +128,7 @@ exports.getActiveEntry = (ticket_id) => {
 
 
 // UPDATE EXIT
-exports.updateExitValidation = (ticket_id, exit_station, travel_time, distance) => {
+exports.updateExitValidation = (ticket_id, exit_station, distance) => {
 
   return new Promise((resolve, reject) => {
 
@@ -136,12 +136,12 @@ exports.updateExitValidation = (ticket_id, exit_station, travel_time, distance) 
       UPDATE ticket_validations
       SET exit_station = ?, 
           exit_time = datetime('now'),
-          travel_time = ?,
+          travel_time = CAST((strftime('%s','now') - strftime('%s',entry_time)) AS INTEGER),
           distance = ?
       WHERE ticket_id = ? AND exit_time IS NULL
     `;
 
-    db.run(query, [exit_station, travel_time, distance, ticket_id], function (err) {
+    db.run(query, [exit_station, distance, ticket_id], function (err) {
 
       if (err) return reject(err);
 

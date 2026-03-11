@@ -14,7 +14,7 @@ network = pd.read_csv(network_path)
 
 station_list = stations["station"].tolist()
 
-TOTAL_ROWS = 5000
+TOTAL_ROWS = 20000
 FRAUD_RATIO = 0.20
 
 rows = []
@@ -29,41 +29,52 @@ for i in range(TOTAL_ROWS):
 
     entry_hour = random.randint(5, 23)
 
-    # realistic metro distance
-    distance = round(random.uniform(2, 25), 2)
+    # realistic distance
+    distance = round(random.uniform(1, 25), 2)
 
-    # normal travel time calculation
-    normal_time = (distance / 35) * 60
-    normal_time = int(normal_time + random.randint(-3, 3))
+    # metro speed ~35 km/h
+    expected_time = (distance / 35) * 60
+    expected_time = int(expected_time)
+
+    # normal travel time with noise
+    travel_time = expected_time + random.randint(-2, 3)
 
     ticket_type = random.choice(["QR", "SmartCard", "Token"])
 
     fraud_label = 0
     repeat_usage = 0
-    travel_time = normal_time
 
     if random.random() < FRAUD_RATIO:
 
         fraud_label = 1
-        fraud_type = random.choice(["reuse", "impossible_time", "slow_travel"])
+        fraud_type = random.choice([
+            "reuse",
+            "impossible_speed",
+            "slow_travel",
+            "distance_jump"
+        ])
 
         if fraud_type == "reuse":
             repeat_usage = 1
 
-        elif fraud_type == "impossible_time":
-            travel_time = random.randint(1, 3)
+        elif fraud_type == "impossible_speed":
+            travel_time = random.randint(1, 2)
 
         elif fraud_type == "slow_travel":
-            travel_time = normal_time + random.randint(40, 80)
+            travel_time = expected_time + random.randint(40, 90)
+
+        elif fraud_type == "distance_jump":
+            travel_time = random.randint(1, 5)
 
     rows.append({
         "ticket_id": str(uuid.uuid4())[:8],
         "entry_station": entry_station,
         "exit_station": exit_station,
         "entry_hour": entry_hour,
+        "distance": distance,
+        "expected_time": expected_time,
         "travel_time": travel_time,
         "ticket_type": ticket_type,
-        "distance": distance,
         "repeat_usage": repeat_usage,
         "fraud_label": fraud_label
     })

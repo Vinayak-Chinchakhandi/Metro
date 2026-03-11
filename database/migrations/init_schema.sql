@@ -22,7 +22,7 @@ CREATE TABLE tickets (
     source_station TEXT NOT NULL,
     destination_station TEXT NOT NULL,
     booking_time TEXT,
-    travel_time TEXT,
+    travel_time INTEGER,
     crowd_level TEXT,
     qr_code TEXT
 );

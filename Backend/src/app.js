@@ -20,8 +20,10 @@ const stationRoutes = require("./routes/stationRoutes");
 const fraudRoutes = require("./routes/fraudRoutes");
 const predictionRoutes = require("./routes/predictionRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const livePredictionRoutes = require("./routes/livePredictionRoutes");
 
 
+app.use("/api/live-predictions", livePredictionRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/tickets", ticketRoutes);
 app.use("/api/stations", stationRoutes);

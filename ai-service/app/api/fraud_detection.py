@@ -23,19 +23,22 @@ def detect_fraud(data: FraudDetectionRequest):
         ticket_type = ticket_type_encoder.transform([data.ticket_type])[0]
 
     except ValueError:
-        return {
-            "error": "Unknown station or ticket type"
-        }
+        return {"error": "Unknown station or ticket type"}
 
     expected_time = expected_travel_time(data.distance)
 
-    features = np.array([[entry_station,
-                          exit_station,
-                          data.entry_hour,
-                          data.travel_time,
-                          ticket_type,
-                          data.distance,
-                          data.repeat_usage]])
+    features = np.array([[
+
+        entry_station,
+        exit_station,
+        data.entry_hour,
+        data.distance,
+        expected_time,
+        data.travel_time,
+        ticket_type,
+        data.repeat_usage
+
+    ]])
 
     probability = float(fraud_model.predict_proba(features)[0][1])
 
