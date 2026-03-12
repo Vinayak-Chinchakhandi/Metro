@@ -59,6 +59,18 @@ function TicketForm() {
         e.preventDefault();
         setMessage("");
 
+        if (!source) {
+            setMessage("Please select source station");
+            setMessageType("error");
+            return;
+        }
+
+        if (!destination) {
+            setMessage("Please select destination station");
+            setMessageType("error");
+            return;
+        }
+
         if (source === destination) {
             setMessage("Source and destination cannot be the same");
             setMessageType("error");
@@ -77,7 +89,7 @@ function TicketForm() {
 
             setMessage("Ticket booked successfully");
             setMessageType("success");
-            
+
             navigate("/ticket", { state: ticket });
 
         } catch (err) {
@@ -113,10 +125,10 @@ function TicketForm() {
             {message && (
                 <div
                     className={`p-3 mb-4 rounded text-sm font-medium ${messageType === "error"
-                            ? "bg-red-100 text-red-700"
-                            : messageType === "success"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-yellow-100 text-yellow-700"
+                        ? "bg-red-100 text-red-700"
+                        : messageType === "success"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-yellow-100 text-yellow-700"
                         }`}
                 >
                     {message}
@@ -170,14 +182,21 @@ function TicketForm() {
                     </label>
 
                     <select
-                        className="w-full border p-2 rounded"
+                        className={`w-full border p-2 rounded ${!source ? "bg-gray-100 cursor-not-allowed" : ""
+                            }`}
                         value={destination}
-                        disabled={!source || stationLoading}
+                        disabled={stationLoading}
+                        onMouseDown={(e) => {
+                            if (!source) {
+                                e.preventDefault();
+                                setMessage("Please select source station first");
+                                setMessageType("error");
+                            }
+                        }}
                         onChange={(e) => {
                             setDestination(e.target.value);
                             setMessage("");
                         }}
-                        required
                     >
 
                         <option value="">
@@ -223,7 +242,7 @@ function TicketForm() {
                 {/* Submit Button */}
                 <button
                     type="submit"
-                    disabled={loading || !source || !destination || !time}
+                    disabled={loading}
                     className={`py-2 rounded text-white ${loading
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-blue-700 hover:bg-blue-800"
@@ -234,9 +253,9 @@ function TicketForm() {
 
                 </button>
 
-            </form>
+            </form >
 
-        </div>
+        </div >
 
     );
 

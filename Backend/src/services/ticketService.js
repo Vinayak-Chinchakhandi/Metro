@@ -26,7 +26,29 @@ exports.bookTicket = async (data) => {
     throw new Error("Interchange routes are coming soon. Please select stations on the same line.");
   }
 
-  const prediction = await aiService.predictDemand(source, time);
+  const hour = parseInt(time.split(":")[0]);
+
+  const day = new Date().toLocaleString("en-US", {
+    weekday: "long"
+  });
+
+  const weatherOptions = ["Clear", "Cloudy", "Rain"];
+  const weather =
+    weatherOptions[Math.floor(Math.random() * weatherOptions.length)];
+
+  const event = 0;
+
+  const stationData = await ticketModel.getStationDetails(source);
+  const is_interchange = stationData?.is_interchange ? 1 : 0;
+
+  const prediction = await aiService.predictDemand(
+    source,
+    hour,
+    day,
+    weather,
+    event,
+    is_interchange
+  );
 
   await predictionModel.savePrediction({
     station: source,
@@ -220,6 +242,11 @@ exports.exitScan = async ({ ticket_id, exit_station }) => {
     travel_time_seconds: travelTime,
     travel_time_minutes: Math.round(travelTime / 60),
     expected_time_seconds: Math.round(expectedTime),
+
+    fraud_probability: fraudResult.fraud_probability,
+    alert: finalAlert,
+    reason: finalReason,
+
     fraud_analysis: {
       ...fraudResult,
       backend_flag: backendFlag,

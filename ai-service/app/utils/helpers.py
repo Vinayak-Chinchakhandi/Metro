@@ -1,9 +1,9 @@
 def get_crowd_level(passengers):
 
-    if passengers < 8000:
+    if passengers < 20:
         return "Low"
 
-    elif passengers < 14000:
+    elif passengers < 60:
         return "Medium"
 
     return "High"

@@ -36,7 +36,11 @@ function StationCard({ station, prediction }) {
           <hr className="my-2" />
 
           <p>
-            <strong>Predicted Demand:</strong> {prediction.predicted_demand}
+            <strong>Current Load:</strong> {prediction.current_station_load ?? 0}
+          </p>
+
+          <p>
+            <strong>Hourly Prediction:</strong> {prediction.predicted_demand ?? 0}
           </p>
 
           <p>

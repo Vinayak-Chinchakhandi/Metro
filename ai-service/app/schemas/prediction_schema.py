@@ -7,6 +7,7 @@ class DemandPredictionRequest(BaseModel):
     day: str
     weather: str
     event: int
+    is_interchange: int
 
 
 class FraudDetectionRequest(BaseModel):

@@ -7,31 +7,25 @@ const { AI_SERVICE_URL } = require("../config/env");
 DEMAND PREDICTION
 ----------------------------------------
 */
-exports.predictDemand = async (station, time) => {
+
+exports.predictDemand = async (
+  station,
+  hour,
+  day,
+  weather,
+  event,
+  is_interchange
+) => {
 
   try {
-
-    const now = new Date();
-
-    // Extract hour from HH:MM
-    const hour = parseInt(time.split(":")[0]);
-
-    // Get current day
-    const day = now.toLocaleString("en-US", { weekday: "long" });
-
-    // Simulated weather (until real API added)
-    const weatherOptions = ["Clear", "Cloudy", "Rain"];
-    const weather = weatherOptions[Math.floor(Math.random() * weatherOptions.length)];
-
-    // Weekend event simulation
-    const event = (day === "Saturday" || day === "Sunday") ? 1 : 0;
 
     const payload = {
       station,
       hour,
       day,
       weather,
-      event
+      event,
+      is_interchange
     };
 
     const response = await axios.post(
@@ -44,14 +38,16 @@ exports.predictDemand = async (station, time) => {
 
   } catch (error) {
 
-    console.error("AI Demand Prediction Error:", error.response?.data || error.message);
+    console.error(
+      "AI Demand Prediction Error:",
+      error.response?.data || error.message
+    );
 
     throw new Error("Failed to fetch demand prediction from AI service");
 
   }
 
 };
-
 
 
 /*

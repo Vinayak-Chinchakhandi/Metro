@@ -19,12 +19,15 @@ function ExitScan() {
         exit_station: qrData.destination
       });
 
+      console.log("EXIT API Responce", res);
+
+
       setResult(res);
       setMessage("Journey completed successfully");
       setMessageType("success");
 
-      if (res.fraud_analysis.alert) {
-        setMessage("⚠ Security Alert: " + res.fraud_analysis.reason);
+      if (res.alert) {
+        setMessage("⚠ Security Alert: " + res.reason);
         setMessageType("warning");
       }
 
@@ -58,13 +61,12 @@ function ExitScan() {
 
         {message && (
           <div
-            className={`mt-4 p-3 rounded text-sm font-medium ${
-              messageType === "error"
-                ? "bg-red-100 text-red-700"
-                : messageType === "warning"
+            className={`mt-4 p-3 rounded text-sm font-medium ${messageType === "error"
+              ? "bg-red-100 text-red-700"
+              : messageType === "warning"
                 ? "bg-yellow-100 text-yellow-700"
                 : "bg-green-100 text-green-700"
-            }`}
+              }`}
           >
             {message}
           </div>
@@ -74,19 +76,39 @@ function ExitScan() {
 
           <div className="mt-4 text-sm">
 
-            <p><strong>Distance:</strong> {result.distance_km} km</p>
+            <p>
+              <strong>Distance:</strong>{" "}
+              {result.distance_km ? Number(result.distance_km).toFixed(2) : "0"} km
+            </p>
 
-            <p><strong>Travel Time:</strong> {result.travel_time_minutes} min</p>
+            <p>
+              <strong>Travel Time:</strong>{" "}
+              {result.travel_time_seconds < 60
+                ? `${result.travel_time_seconds} sec`
+                : `${result.travel_time_minutes} min`}
+            </p>
 
             <p>
               <strong>Fraud Probability:</strong>{" "}
-              {result.fraud_analysis.fraud_probability}
+              {result.fraud_probability
+                ? Number(result.fraud_probability).toFixed(3)
+                : "0"}
             </p>
 
             <p>
               <strong>Alert:</strong>{" "}
-              {result.fraud_analysis.alert ? "Yes" : "No"}
+              {result.alert ? (
+                <span className="text-red-600 font-bold">YES 🚨</span>
+              ) : (
+                <span className="text-green-600 font-bold">NO</span>
+              )}
             </p>
+
+            {result.reason && (
+              <p className="text-red-600 font-semibold mt-2">
+                Reason: {result.reason}
+              </p>
+            )}
 
           </div>
 

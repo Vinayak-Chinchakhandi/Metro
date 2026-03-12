@@ -164,48 +164,102 @@ function NetworkMap() {
 
           })}
 
-          {/* STATION MARKERS */}
+          {/* STATION MARKERS + HEATMAP */}
 
-          {metroStations.map((station) => (
+          {metroStations.map((station) => {
 
-            <Marker
-              key={`${station.code}-${station.sequence}`}
-              position={[
-                Number(station.latitude),
-                Number(station.longitude)
-              ]}
+            const color = getStationColor(station.name);
 
-              icon={getStationIcon(station.name)}
-            >
+            return (
 
-              <Popup>
+              <>
 
-                <strong>{station.name}</strong>
+                {/* HEATMAP CIRCLE */}
 
-                <br />
+                <CircleMarker
+                  key={`circle-${station.code}-${station.sequence}`}
+                  center={[
+                    Number(station.latitude),
+                    Number(station.longitude)
+                  ]}
+                  radius={32}
+                  pathOptions={{
+                    fillColor:
+                      color === "red"
+                        ? "#ff6b6b"
+                        : color === "orange"
+                          ? "#ffd166"
+                          : "#6bcf7f",
+                    fillOpacity: 0.35,
+                    stroke: false
+                  }}
+                />
 
-                Line: {station.line}
+                {/* STATION MARKER */}
 
-                <br />
+                <Marker
+                  key={`${station.code}-${station.sequence}`}
+                  position={[
+                    Number(station.latitude),
+                    Number(station.longitude)
+                  ]}
+                  icon={getStationIcon(station.name)}
+                >
 
-                Station Code: {station.code}
+                  <Popup>
 
-                <br />
+                    <strong>{station.name}</strong>
 
-                Sequence: {station.sequence}
+                    <br />
 
-                <br />
+                    Line: {station.line}
 
-                {station.is_interchange
-                  ? "🔴 Interchange Station"
-                  : "Regular Station"
-                }
+                    <br />
 
-              </Popup>
+                    Station Code: {station.code}
 
-            </Marker>
+                    <br />
 
-          ))}
+                    Sequence: {station.sequence}
+
+                    <br />
+
+                    {station.is_interchange
+                      ? "🔴 Interchange Station"
+                      : "Regular Station"
+                    }
+
+                    <br /><br />
+
+                    {(() => {
+
+                      const prediction = predictions.find(
+                        (p) => p.station === station.name
+                      );
+
+                      if (!prediction) {
+                        return "No prediction data";
+                      }
+
+                      return (
+                        <>
+                          <strong>Current Load:</strong> {prediction.current_station_load}
+                          <br />
+                          <strong>Crowd Level:</strong> {prediction.crowd_level}
+                        </>
+                      );
+
+                    })()}
+
+                  </Popup>
+
+                </Marker>
+
+              </>
+
+            );
+
+          })}
 
         </MapContainer>
 

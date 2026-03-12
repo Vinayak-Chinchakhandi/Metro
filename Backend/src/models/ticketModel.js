@@ -278,3 +278,30 @@ exports.getCompletedTrip = (ticket_id) => {
   });
 
 };
+
+exports.getStationDetails = (stationName) => {
+
+  return new Promise((resolve, reject) => {
+
+    const query = `
+      SELECT 
+        s.name,
+        m.is_interchange
+      FROM stations s
+      LEFT JOIN metro_network m
+      ON s.code = m.station_code
+      WHERE s.name = ?
+      LIMIT 1
+    `;
+
+    db.get(query, [stationName], (err, row) => {
+
+      if (err) return reject(err);
+
+      resolve(row);
+
+    });
+
+  });
+
+};
