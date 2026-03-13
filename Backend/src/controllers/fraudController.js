@@ -4,17 +4,19 @@ const aiService = require("../services/aiService");
 // GET FRAUD ALERTS
 exports.getFraudAlerts = async (req, res, next) => {
 
-try {
+  try {
 
-const alerts = await fraudModel.getAlerts();  
+    const { date, month } = req.query;
 
-res.json(alerts);
+    const alerts = await fraudModel.getAlerts(date, month);
 
-} catch (err) {
+    res.json(alerts);
 
-next(err);
+  } catch (err) {
 
-}
+    next(err);
+
+  }
 
 };
 

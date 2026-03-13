@@ -2,18 +2,20 @@ import { useEffect, useState } from "react";
 import { getFraudAlerts } from "../services/fraudService";
 import FraudAlertCard from "./FraudAlertCard";
 
-function FraudAlerts() {
+function FraudAlerts({ date, month }) {
 
   const [alerts, setAlerts] = useState([]);
 
   useEffect(() => {
     fetchAlerts();
-  }, []);
+  }, [date, month]);
 
   const fetchAlerts = async () => {
     try {
-      const data = await getFraudAlerts();
+
+      const data = await getFraudAlerts(date, month);
       setAlerts(data);
+
     } catch (err) {
       console.error("Error fetching fraud alerts", err);
     }

@@ -28,11 +28,26 @@ exports.createAlert = (alert) => {
 };
 
 
-exports.getAlerts = () => {
+exports.getAlerts = (date, month) => {
 
   return new Promise((resolve, reject) => {
 
-    db.all("SELECT * FROM fraud_alerts", (err, rows) => {
+    let query = "SELECT * FROM fraud_alerts WHERE 1=1";
+    let params = [];
+
+    if (date) {
+      query += " AND DATE(created_at) = ?";
+      params.push(date);
+    }
+
+    if (month) {
+      query += " AND strftime('%Y-%m', created_at) = ?";
+      params.push(month);
+    }
+
+    query += " ORDER BY created_at DESC";
+
+    db.all(query, params, (err, rows) => {
 
       if (err) return reject(err);
 

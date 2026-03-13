@@ -2,18 +2,18 @@ import { useEffect, useState } from "react";
 import { getPredictions } from "../services/predictionService";
 import PredictionCard from "./PredictionCard";
 
-function Predictions() {
+function Predictions({ date, month }) {
 
   const [predictions, setPredictions] = useState([]);
 
   useEffect(() => {
     fetchPredictions();
-  }, []);
+  }, [date, month]);
 
   const fetchPredictions = async () => {
     try {
 
-      const data = await getPredictions();
+      const data = await getPredictions(date, month);
       setPredictions(data);
 
     } catch (err) {
