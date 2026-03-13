@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Stations from "../components/Stations";
 
 function StationsPage() {
 
   const navigate = useNavigate();
+
+  const [search, setSearch] = useState("");
 
   return (
     <div className="p-8">
@@ -23,7 +26,21 @@ function StationsPage() {
 
       </div>
 
-      <Stations />
+      {/* Search */}
+
+      <div className="mb-6">
+
+        <input
+          type="text"
+          placeholder="Search station..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border p-2 rounded w-80"
+        />
+
+      </div>
+
+      <Stations search={search} />
 
     </div>
   );
