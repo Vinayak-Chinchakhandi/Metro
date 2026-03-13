@@ -26,15 +26,21 @@ function Dashboard() {
 
   useEffect(() => {
     fetchDashboardData();
+    const interval = setInterval(fetchDashboardData, 30000);
+    return () => clearInterval(interval);
   }, []);
+
 
   const fetchDashboardData = async () => {
 
     try {
 
-      const kpiData = await getKPI();
-      const fraudStats = await getFraudStats();
-      const stations = await getTopStations();
+      const [kpiData, fraudStats, stations] = await Promise.all([
+        getKPI(),
+        getFraudStats(),
+        getTopStations()
+      ]);
+
 
       setKpi(kpiData);
       setFraudData(fraudStats);

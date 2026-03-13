@@ -61,11 +61,11 @@ function AdminLoginPage() {
 
             <button
                 onClick={() => navigate("/")}
-                className="absolute top-6 right-6 text-red-500 text-3xl 
-  hover:text-red-300 transition"
+                className="absolute top-5 right-5 text-white/60 text-lg hover:text-white transition"
             >
                 ✕
             </button>
+
 
 
             {/* LOGIN CARD */}
