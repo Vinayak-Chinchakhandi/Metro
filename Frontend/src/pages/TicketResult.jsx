@@ -12,8 +12,8 @@ function TicketResult() {
 
   if (!ticket) {
     return (
-      <div className="p-10">
-        <h2 className="text-xl font-bold text-red-500">
+      <div className="p-10 text-center">
+        <h2 className="text-xl font-semibold text-red-500">
           No ticket data found
         </h2>
       </div>
@@ -23,7 +23,6 @@ function TicketResult() {
   const downloadTicket = async () => {
 
     const canvas = await html2canvas(ticketRef.current);
-
     const image = canvas.toDataURL("image/png");
 
     const link = document.createElement("a");
@@ -35,51 +34,81 @@ function TicketResult() {
 
   };
 
+  const getCrowdBadge = () => {
+    if (ticket.crowd_level === "High") return "bg-red-100 text-red-600";
+    if (ticket.crowd_level === "Medium") return "bg-orange-100 text-orange-600";
+    return "bg-green-100 text-green-600";
+  };
+
   return (
-    <div className="flex justify-center mt-10">
 
-      <div ref={ticketRef} className="bg-white p-8 rounded shadow w-96 text-center">
+    <div className="p-8 flex justify-center">
 
-        <h2 className="text-2xl font-bold mb-6">
-          Metro Ticket
+      <div ref={ticketRef}
+        className="bg-white p-8 rounded-xl shadow-md border border-indigo-100 w-96 text-center">
+
+        {/* HEADER */}
+
+        <h2 className="text-2xl font-semibold text-indigo-600 mb-6">
+          Metro Smart Ticket
         </h2>
 
-        <p className="mb-2">
-          <strong>Ticket ID:</strong> {ticket.id}
-        </p>
+        {/* TICKET DETAILS */}
 
-        <p className="mb-2">
-          <strong>From:</strong> {ticket.source}
-        </p>
+        <div className="text-slate-700 text-sm space-y-2 mb-4">
 
-        <p className="mb-2">
-          <strong>To:</strong> {ticket.destination}
-        </p>
+          <p>
+            <strong>Ticket ID:</strong> {ticket.id}
+          </p>
 
-        <p className="mb-4">
-          <strong>Crowd Level:</strong> {ticket.crowd_level}
-        </p>
+          <p>
+            <strong>From:</strong> {ticket.source}
+          </p>
 
-        {/* QR Code Component */}
+          <p>
+            <strong>To:</strong> {ticket.destination}
+          </p>
+
+          <div className="flex justify-center items-center gap-2">
+
+            <strong>Crowd Level:</strong>
+
+            <span className={`text-xs px-2 py-1 rounded-full ${getCrowdBadge()}`}>
+              {ticket.crowd_level}
+            </span>
+
+          </div>
+
+        </div>
+
+        {/* QR CODE */}
+
         <QRDisplay qrValue={ticket.qr_code} />
 
-        <button
-          onClick={downloadTicket}
-          className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Download Ticket
-        </button>
+        {/* ACTION BUTTONS */}
 
-        <button
-          onClick={() => navigate("/book")}
-          className="mt-6 bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800"
-        >
-          Book Another Ticket
-        </button>
+        <div className="flex flex-col gap-3 mt-6">
+
+          <button
+            onClick={downloadTicket}
+            className="bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
+          >
+            Download Ticket
+          </button>
+
+          <button
+            onClick={() => navigate("/book")}
+            className="bg-slate-200 text-slate-700 py-2 rounded-lg hover:bg-slate-300 transition"
+          >
+            Book Another Ticket
+          </button>
+
+        </div>
 
       </div>
 
     </div>
+
   );
 }
 

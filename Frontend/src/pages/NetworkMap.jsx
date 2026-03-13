@@ -1,8 +1,7 @@
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, CircleMarker } from "react-leaflet";
 import metroStations from "../maps/metroStations";
 import "leaflet/dist/leaflet.css";
 import { usePredictions } from "../hooks/usePredictions";
-import { CircleMarker } from "react-leaflet";
 import L from "leaflet";
 
 // Fix default marker issue
@@ -23,39 +22,18 @@ function NetworkMap() {
 
   const predictions = usePredictions();
 
-  /*
-  ----------------------------------------
-  GROUP STATIONS BY LINE
-  ----------------------------------------
-  */
-
   const lines = {};
 
   metroStations.forEach((station) => {
-
     if (!lines[station.line]) {
       lines[station.line] = [];
     }
-
     lines[station.line].push(station);
-
   });
-
-  /*
-  ----------------------------------------
-  SORT STATIONS BY SEQUENCE
-  ----------------------------------------
-  */
 
   Object.keys(lines).forEach((line) => {
     lines[line].sort((a, b) => a.sequence - b.sequence);
   });
-
-  /*
-  ----------------------------------------
-  LINE COLORS
-  ----------------------------------------
-  */
 
   const getLineColor = (line) => {
 
@@ -66,7 +44,6 @@ function NetworkMap() {
     if (l.includes("yellow")) return "gold";
 
     return "blue";
-
   };
 
   const getStationColor = (stationName) => {
@@ -119,149 +96,182 @@ function NetworkMap() {
 
   return (
 
-    <div className="p-6">
+    <div className="p-8">
 
-      <h1 className="text-2xl font-bold mb-4">
-        Bangalore Metro Network
-      </h1>
+      <div className="max-w-7xl mx-auto">
 
-      <div className="h-[650px] rounded overflow-hidden">
+        {/* HEADER */}
 
-        <MapContainer
-          center={center}
-          zoom={11}
-          style={{ height: "100%", width: "100%" }}
-        >
+        <div className="mb-6">
 
-          <TileLayer
-            attribution="&copy; OpenStreetMap contributors"
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          <h1 className="text-3xl font-semibold text-slate-800">
+            Bangalore Metro Network
+          </h1>
 
-          {/* DRAW METRO LINES */}
+          <p className="text-slate-600 mt-1">
+            Visualize metro routes and live station crowd predictions.
+          </p>
 
-          {Object.keys(lines).map((line) => {
+        </div>
 
-            const positions = lines[line]
-              .filter(s => s.latitude && s.longitude)
-              .map((s) => [
-                Number(s.latitude),
-                Number(s.longitude)
-              ]);
+        {/* LEGEND */}
 
-            if (positions.length < 2) return null;
+        <div className="flex gap-6 mb-4 text-sm">
 
-            return (
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+            Low Crowd
+          </div>
 
-              <Polyline
-                key={line}
-                positions={positions}
-                color={getLineColor(line)}
-                weight={5}
-              />
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 bg-orange-400 rounded-full"></span>
+            Medium Crowd
+          </div>
 
-            );
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 bg-red-500 rounded-full"></span>
+            High Crowd
+          </div>
 
-          })}
+        </div>
 
-          {/* STATION MARKERS + HEATMAP */}
+        {/* MAP CARD */}
 
-          {metroStations.map((station) => {
+        <div className="h-[650px] rounded-xl overflow-hidden shadow-md border border-indigo-100">
 
-            const color = getStationColor(station.name);
+          <MapContainer
+            center={center}
+            zoom={11}
+            style={{ height: "100%", width: "100%" }}
+          >
 
-            return (
+            <TileLayer
+              attribution="&copy; OpenStreetMap contributors"
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
 
-              <>
+            {/* DRAW METRO LINES */}
 
-                {/* HEATMAP CIRCLE */}
+            {Object.keys(lines).map((line) => {
 
-                <CircleMarker
-                  key={`circle-${station.code}-${station.sequence}`}
-                  center={[
-                    Number(station.latitude),
-                    Number(station.longitude)
-                  ]}
-                  radius={32}
-                  pathOptions={{
-                    fillColor:
-                      color === "red"
-                        ? "#ff6b6b"
-                        : color === "orange"
-                          ? "#ffd166"
-                          : "#6bcf7f",
-                    fillOpacity: 0.35,
-                    stroke: false
-                  }}
+              const positions = lines[line]
+                .filter(s => s.latitude && s.longitude)
+                .map((s) => [
+                  Number(s.latitude),
+                  Number(s.longitude)
+                ]);
+
+              if (positions.length < 2) return null;
+
+              return (
+
+                <Polyline
+                  key={line}
+                  positions={positions}
+                  color={getLineColor(line)}
+                  weight={5}
                 />
 
-                {/* STATION MARKER */}
+              );
 
-                <Marker
-                  key={`${station.code}-${station.sequence}`}
-                  position={[
-                    Number(station.latitude),
-                    Number(station.longitude)
-                  ]}
-                  icon={getStationIcon(station.name)}
-                >
+            })}
 
-                  <Popup>
+            {/* STATION MARKERS */}
 
-                    <strong>{station.name}</strong>
+            {metroStations.map((station) => {
 
-                    <br />
+              const color = getStationColor(station.name);
 
-                    Line: {station.line}
+              return (
 
-                    <br />
+                <>
 
-                    Station Code: {station.code}
+                  <CircleMarker
+                    key={`circle-${station.code}-${station.sequence}`}
+                    center={[
+                      Number(station.latitude),
+                      Number(station.longitude)
+                    ]}
+                    radius={32}
+                    pathOptions={{
+                      fillColor:
+                        color === "red"
+                          ? "#ff6b6b"
+                          : color === "orange"
+                            ? "#ffd166"
+                            : "#6bcf7f",
+                      fillOpacity: 0.35,
+                      stroke: false
+                    }}
+                  />
 
-                    <br />
+                  <Marker
+                    key={`${station.code}-${station.sequence}`}
+                    position={[
+                      Number(station.latitude),
+                      Number(station.longitude)
+                    ]}
+                    icon={getStationIcon(station.name)}
+                  >
 
-                    Sequence: {station.sequence}
+                    <Popup>
 
-                    <br />
+                      <strong>{station.name}</strong>
 
-                    {station.is_interchange
-                      ? "🔴 Interchange Station"
-                      : "Regular Station"
-                    }
+                      <br />
 
-                    <br /><br />
+                      Line: {station.line}
 
-                    {(() => {
+                      <br />
 
-                      const prediction = predictions.find(
-                        (p) => p.station === station.name
-                      );
+                      Station Code: {station.code}
 
-                      if (!prediction) {
-                        return "No prediction data";
+                      <br />
+
+                      Sequence: {station.sequence}
+
+                      <br />
+
+                      {station.is_interchange
+                        ? "🔴 Interchange Station"
+                        : "Regular Station"
                       }
 
-                      return (
-                        <>
-                          <strong>Current Load:</strong> {prediction.current_station_load}
-                          <br />
-                          <strong>Crowd Level:</strong> {prediction.crowd_level}
-                        </>
-                      );
+                      <br /><br />
 
-                    })()}
+                      {(() => {
 
-                  </Popup>
+                        const prediction = predictions.find(
+                          (p) => p.station === station.name
+                        );
 
-                </Marker>
+                        if (!prediction) {
+                          return "No prediction data";
+                        }
 
-              </>
+                        return (
+                          <>
+                            <strong>Current Load:</strong> {prediction.current_station_load}
+                            <br />
+                            <strong>Crowd Level:</strong> {prediction.crowd_level}
+                          </>
+                        );
 
-            );
+                      })()}
 
-          })}
+                    </Popup>
 
-        </MapContainer>
+                  </Marker>
+
+                </>
+
+              );
+
+            })}
+
+          </MapContainer>
+
+        </div>
 
       </div>
 

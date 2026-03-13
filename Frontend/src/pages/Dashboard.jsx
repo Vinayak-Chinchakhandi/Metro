@@ -54,45 +54,68 @@ function Dashboard() {
   };
 
   return (
-    <div className="p-8">
+    <div>
 
-      <div className="flex justify-between items-center mb-2">
+      {/* HEADER */}
 
-        <h1 className="text-3xl font-bold">
+      <div className="flex justify-between items-center mb-4">
+
+        <h1 className="text-3xl font-semibold text-slate-800">
           Admin Dashboard
         </h1>
 
         <button
           onClick={handleLogout}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
         >
           Logout
         </button>
 
       </div>
 
-      <p className="text-sm text-gray-500 mb-6">
-        🟢 System Online | Last Updated: {lastUpdated}
+      <p className="text-sm text-slate-500 mb-8">
+        🟢 System Online • Last Updated: {lastUpdated}
       </p>
 
 
       {/* KPI CARDS */}
 
-      <div className="grid grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
 
-        <div className="bg-white shadow rounded p-4 border-l-4 border-blue-500">
-          <h3 className="text-gray-500 text-sm">Total Tickets Today</h3>
-          <p className="text-2xl font-bold">{kpi.totalTickets}</p>
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-indigo-100 hover:shadow-lg transition">
+
+          <p className="text-sm text-slate-500 mb-1">
+            Total Tickets Today
+          </p>
+
+          <p className="text-3xl font-bold text-indigo-600">
+            {kpi.totalTickets}
+          </p>
+
         </div>
 
-        <div className="bg-white shadow rounded p-4 border-l-4 border-red-500">
-          <h3 className="text-gray-500 text-sm">Fraud Alerts</h3>
-          <p className="text-2xl font-bold">{kpi.fraudAlerts}</p>
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-indigo-100 hover:shadow-lg transition">
+
+          <p className="text-sm text-slate-500 mb-1">
+            Fraud Alerts
+          </p>
+
+          <p className="text-3xl font-bold text-red-500">
+            {kpi.fraudAlerts}
+          </p>
+
         </div>
 
-        <div className="bg-white shadow rounded p-4 border-l-4 border-green-500">
-          <h3 className="text-gray-500 text-sm">Active Stations</h3>
-          <p className="text-2xl font-bold">{kpi.activeStations}</p>
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-indigo-100 hover:shadow-lg transition">
+
+          <p className="text-sm text-slate-500 mb-1">
+            Active Stations
+          </p>
+
+          <p className="text-3xl font-bold text-green-500">
+            {kpi.activeStations}
+          </p>
+
         </div>
 
       </div>
@@ -100,7 +123,7 @@ function Dashboard() {
 
       {/* CHARTS */}
 
-      <div className="grid grid-cols-2 gap-6 mb-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
 
         <FraudPieChart data={fraudData} />
 
@@ -111,25 +134,25 @@ function Dashboard() {
 
       {/* NAVIGATION */}
 
-      <div className="flex gap-4">
+      <div className="flex flex-wrap gap-4">
 
         <button
           onClick={() => navigate("/dashboard/fraud")}
-          className="px-4 py-2 rounded bg-red-600 text-white"
+          className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
         >
           Fraud Alerts
         </button>
 
         <button
           onClick={() => navigate("/dashboard/predictions")}
-          className="px-4 py-2 rounded bg-blue-600 text-white"
+          className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition"
         >
           Predictions
         </button>
 
         <button
           onClick={() => navigate("/dashboard/stations")}
-          className="px-4 py-2 rounded bg-green-600 text-white"
+          className="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition"
         >
           Stations
         </button>

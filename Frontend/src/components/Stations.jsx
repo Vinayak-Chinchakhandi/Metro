@@ -46,25 +46,41 @@ function Stations({ search }) {
 
   return (
 
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
 
-      {filteredStations.map((station) => {
+      {filteredStations.length === 0 && (
 
-        const prediction = predictions.find(
-          (p) => p.station === station.name
-        );
+        <div className="bg-white border border-indigo-100 rounded-xl p-6 text-center shadow-sm">
 
-        return (
+          <p className="text-slate-600 font-medium">
+            No stations match your search
+          </p>
 
-          <StationCard
-            key={station.code}
-            station={station}
-            prediction={prediction}
-          />
+        </div>
 
-        );
+      )}
 
-      })}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        {filteredStations.map((station) => {
+
+          const prediction = predictions.find(
+            (p) => p.station === station.name
+          );
+
+          return (
+
+            <StationCard
+              key={station.code}
+              station={station}
+              prediction={prediction}
+            />
+
+          );
+
+        })}
+
+      </div>
 
     </div>
 

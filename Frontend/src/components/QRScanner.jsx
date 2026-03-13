@@ -26,7 +26,9 @@ function QRScanner({ onScan }) {
 
   }, [onScan]);
 
-  return <div id="reader" className="w-full"></div>;
+  return (
+    <div id="reader" className="w-[300px] mx-auto"></div>
+  );
 }
 
 export default QRScanner;

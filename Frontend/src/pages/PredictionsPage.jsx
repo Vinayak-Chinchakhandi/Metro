@@ -10,24 +10,27 @@ function PredictionsPage() {
   const [month, setMonth] = useState("");
 
   return (
+
     <div className="p-8">
+
+      {/* HEADER */}
 
       <div className="flex justify-between items-center mb-6">
 
-        <h1 className="text-3xl font-bold">
+        <h1 className="text-3xl font-semibold text-slate-800">
           Demand Predictions
         </h1>
 
         <button
           onClick={() => navigate("/dashboard")}
-          className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900"
+          className="bg-indigo-700 text-white px-4 py-2 rounded-lg hover:bg-indigo-800 transition"
         >
           Back
         </button>
 
       </div>
 
-      {/* Filters */}
+      {/* FILTERS */}
 
       <div className="flex gap-4 mb-6">
 
@@ -35,14 +38,16 @@ function PredictionsPage() {
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="border p-2 rounded"
+          className="border border-indigo-100 p-2.5 rounded-lg 
+          focus:ring-2 focus:ring-indigo-500 outline-none"
         />
 
         <input
           type="month"
           value={month}
           onChange={(e) => setMonth(e.target.value)}
-          className="border p-2 rounded"
+          className="border border-indigo-100 p-2.5 rounded-lg 
+          focus:ring-2 focus:ring-indigo-500 outline-none"
         />
 
         <button
@@ -50,17 +55,21 @@ function PredictionsPage() {
             setDate("");
             setMonth("");
           }}
-          className="bg-gray-300 px-4 py-2 rounded"
+          className="px-4 py-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition"
         >
           Reset
         </button>
 
       </div>
 
+      {/* PREDICTIONS */}
+
       <Predictions date={date} month={month} />
 
     </div>
+
   );
+
 }
 
 export default PredictionsPage;

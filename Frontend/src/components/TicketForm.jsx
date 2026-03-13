@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getStations, bookTicket } from "../services/ticketService";
+
 function TicketForm() {
 
     const navigate = useNavigate();
@@ -17,8 +18,6 @@ function TicketForm() {
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("");
 
-
-    // Set default time
     useEffect(() => {
         const now = new Date();
         const hours = String(now.getHours()).padStart(2, "0");
@@ -26,11 +25,9 @@ function TicketForm() {
         setTime(`${hours}:${minutes}`);
     }, []);
 
-
     useEffect(() => {
         fetchStations();
     }, []);
-
 
     const fetchStations = async () => {
 
@@ -52,7 +49,6 @@ function TicketForm() {
         }
 
     };
-
 
     const handleSubmit = async (e) => {
 
@@ -112,42 +108,39 @@ function TicketForm() {
 
     };
 
-
     return (
 
-        <div className="max-w-xl bg-white p-6 rounded shadow">
+        <div className="max-w-xl bg-white p-8 rounded-xl shadow-sm border border-indigo-100">
 
-            <h2 className="text-2xl font-bold mb-6">
+            <h2 className="text-2xl font-semibold text-slate-800 mb-6">
                 Book Metro Ticket
             </h2>
 
-
             {message && (
                 <div
-                    className={`p-3 mb-4 rounded text-sm font-medium ${messageType === "error"
-                        ? "bg-red-100 text-red-700"
-                        : messageType === "success"
+                    className={`p-3 mb-5 rounded text-sm font-medium ${
+                        messageType === "error"
+                            ? "bg-red-100 text-red-700"
+                            : messageType === "success"
                             ? "bg-green-100 text-green-700"
                             : "bg-yellow-100 text-yellow-700"
-                        }`}
+                    }`}
                 >
                     {message}
                 </div>
             )}
 
-
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
                 {/* Source Station */}
                 <div>
 
-                    <label className="block text-sm mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
                         Source Station
                     </label>
 
                     <select
-                        className="w-full border p-2 rounded"
+                        className="w-full border border-indigo-100 p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         value={source}
                         disabled={stationLoading}
                         onChange={(e) => {
@@ -173,17 +166,17 @@ function TicketForm() {
                 </div>
 
 
-
                 {/* Destination Station */}
                 <div>
 
-                    <label className="block text-sm mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
                         Destination Station
                     </label>
 
                     <select
-                        className={`w-full border p-2 rounded ${!source ? "bg-gray-100 cursor-not-allowed" : ""
-                            }`}
+                        className={`w-full border border-indigo-100 p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                            !source ? "bg-gray-100 cursor-not-allowed" : ""
+                        }`}
                         value={destination}
                         disabled={stationLoading}
                         onMouseDown={(e) => {
@@ -216,17 +209,16 @@ function TicketForm() {
                 </div>
 
 
-
                 {/* Travel Time */}
                 <div>
 
-                    <label className="block text-sm mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
                         Travel Time
                     </label>
 
                     <input
                         type="time"
-                        className="w-full border p-2 rounded"
+                        className="w-full border border-indigo-100 p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         value={time}
                         onChange={(e) => {
                             setTime(e.target.value);
@@ -238,24 +230,24 @@ function TicketForm() {
                 </div>
 
 
-
                 {/* Submit Button */}
                 <button
                     type="submit"
                     disabled={loading}
-                    className={`py-2 rounded text-white ${loading
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-blue-700 hover:bg-blue-800"
-                        }`}
+                    className={`py-2.5 rounded-lg text-white font-medium transition ${
+                        loading
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-indigo-600 hover:bg-indigo-700"
+                    }`}
                 >
 
                     {loading ? "Booking..." : "Book Ticket"}
 
                 </button>
 
-            </form >
+            </form>
 
-        </div >
+        </div>
 
     );
 

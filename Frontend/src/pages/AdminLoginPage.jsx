@@ -4,107 +4,128 @@ import { adminLogin } from "../services/adminService";
 
 function AdminLoginPage() {
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
 
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
+    const handleLogin = async () => {
 
-    setError("");
+        setError("");
 
-    if (!username || !password) {
-      setError("Username and password required");
-      return;
-    }
+        if (!username || !password) {
+            setError("Username and password required");
+            return;
+        }
 
-    try {
+        try {
 
-      setLoading(true);
+            setLoading(true);
 
-      const res = await adminLogin({
-        username,
-        password
-      });
+            const res = await adminLogin({
+                username,
+                password
+            });
 
-      if (res.message === "Login successful") {
+            if (res.message === "Login successful") {
 
-        localStorage.setItem("adminAuth", "true");
+                localStorage.setItem("adminAuth", "true");
 
-        navigate("/dashboard");
+                navigate("/dashboard");
 
-      }
+            }
 
-    } catch (err) {
+        } catch (err) {
 
-      if (err.response?.data?.error) {
-        setError(err.response.data.error);
-      } else {
-        setError("Login failed");
-      }
+            if (err.response?.data?.error) {
+                setError(err.response.data.error);
+            } else {
+                setError("Login failed");
+            }
 
-    } finally {
+        } finally {
+            setLoading(false);
+        }
 
-      setLoading(false);
+    };
 
-    }
+    return (
 
-  };
+        <div className="min-h-screen flex items-center justify-center 
+    bg-gradient-to-br from-black via-red-950 to-black relative">
 
-  return (
+            {/* EXIT BUTTON */}
 
-    <div className="min-h-screen flex items-center justify-center bg-red-950">
+            <button
+                onClick={() => navigate("/")}
+                className="absolute top-6 right-6 text-red-500 text-3xl 
+  hover:text-red-300 transition"
+            >
+                ✕
+            </button>
 
-      <div className="bg-black text-white p-8 rounded-xl shadow-lg w-96">
 
-        <h1 className="text-3xl font-bold text-red-500 mb-2 text-center">
-          ☠ ADMIN ACCESS
-        </h1>
+            {/* LOGIN CARD */}
 
-        <p className="text-gray-400 text-center mb-6">
-          Restricted Area — Authorized Personnel Only
-        </p>
+            <div className="bg-black/90 backdrop-blur-lg text-white 
+      p-10 rounded-2xl 
+      shadow-[0_0_50px_rgba(255,0,0,0.6)] 
+      w-96 border border-red-700">
 
-        {error && (
-          <p className="text-red-400 mb-4">{error}</p>
-        )}
+                <h1 className="text-3xl font-bold text-red-500 text-center mb-2 animate-pulse">
+                    ☠ ADMIN ACCESS
+                </h1>
 
-        <input
-          type="text"
-          placeholder="Username"
-          className="w-full p-2 mb-3 rounded text-black"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+                <p className="text-gray-400 text-center mb-6 text-sm tracking-wide">
+                    Restricted Area — Authorized Personnel Only
+                </p>
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full p-2 mb-4 rounded text-black"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+                {error && (
+                    <p className="text-red-400 mb-4 text-center">{error}</p>
+                )}
 
-        <button
-          onClick={handleLogin}
-          disabled={loading}
-          className={`w-full py-2 rounded ${
-            loading
-              ? "bg-gray-500"
-              : "bg-red-600 hover:bg-red-700"
-          }`}
-        >
-          {loading ? "Authenticating..." : "Login"}
-        </button>
+                <input
+                    type="text"
+                    placeholder="Username"
+                    className="w-full p-3 mb-4 rounded-lg 
+          bg-black border border-gray-700 
+          focus:border-red-500 focus:outline-none 
+          text-white placeholder-gray-500 transition"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
 
-      </div>
+                <input
+                    type="password"
+                    placeholder="Password"
+                    className="w-full p-3 mb-5 rounded-lg 
+          bg-black border border-gray-700 
+          focus:border-red-500 focus:outline-none 
+          text-white placeholder-gray-500 transition"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
 
-    </div>
+                <button
+                    onClick={handleLogin}
+                    disabled={loading}
+                    className={`w-full py-3 rounded-lg font-semibold transition
+          ${loading
+                            ? "bg-gray-700 cursor-not-allowed"
+                            : "bg-red-600 hover:bg-red-700 hover:shadow-[0_0_20px_rgba(255,0,0,0.8)]"
+                        }`}
+                >
+                    {loading ? "Authenticating..." : "ACCESS SYSTEM"}
+                </button>
 
-  );
+            </div>
+
+        </div>
+
+    );
 
 }
 

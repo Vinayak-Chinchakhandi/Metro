@@ -13,73 +13,88 @@ import NetworkMap from "./pages/NetworkMap";
 import EntryScan from "./pages/EntryScan";
 import ExitScan from "./pages/ExitScan";
 import AdminLoginPage from "./pages/AdminLoginPage";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
 
   return (
+
     <Router>
 
-      <Layout>
+      <Routes>
 
-        <Routes>
+        {/* LOGIN PAGE (NO LAYOUT) */}
+        <Route path="/admin/login" element={<AdminLoginPage />} />
 
-          <Route path="/" element={<Home />} />
+        {/* ALL PAGES WITH LAYOUT */}
+        <Route
+          path="/*"
+          element={
+            <Layout>
 
-          <Route path="/book" element={<BookTicket />} />
+              <Routes>
 
-          <Route path="/ticket" element={<TicketResult />} />
+                <Route path="/" element={<Home />} />
 
-          <Route path="/admin/login" element={<AdminLoginPage />} />
+                <Route path="/book" element={<BookTicket />} />
 
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
+                <Route path="/ticket" element={<TicketResult />} />
 
-          <Route
-            path="/dashboard/fraud"
-            element={
-              <ProtectedRoute>
-                <FraudPage />
-              </ProtectedRoute>
-            }
-          />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
 
-          <Route
-            path="/dashboard/predictions"
-            element={
-              <ProtectedRoute>
-                <PredictionsPage />
-              </ProtectedRoute>
-            }
-          />
+                <Route
+                  path="/dashboard/fraud"
+                  element={
+                    <ProtectedRoute>
+                      <FraudPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-          <Route
-            path="/dashboard/stations"
-            element={
-              <ProtectedRoute>
-                <StationsPage />
-              </ProtectedRoute>
-            }
-          />
+                <Route
+                  path="/dashboard/predictions"
+                  element={
+                    <ProtectedRoute>
+                      <PredictionsPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-          <Route path="/map" element={<NetworkMap />} />
+                <Route
+                  path="/dashboard/stations"
+                  element={
+                    <ProtectedRoute>
+                      <StationsPage />
+                    </ProtectedRoute>
+                  }
+                />
 
-          <Route path="/entry" element={<EntryScan />} />
+                <Route path="/map" element={<NetworkMap />} />
 
-          <Route path="/exit" element={<ExitScan />} />
+                <Route path="/entry" element={<EntryScan />} />
 
-        </Routes>
+                <Route path="/exit" element={<ExitScan />} />
 
-      </Layout>
+              </Routes>
+
+            </Layout>
+          }
+        />
+
+      </Routes>
 
     </Router>
+
   );
+
 }
 
 export default App;

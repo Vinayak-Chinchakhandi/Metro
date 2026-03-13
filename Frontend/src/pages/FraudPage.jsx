@@ -20,7 +20,7 @@ function FraudPage() {
 
         <button
           onClick={() => navigate("/dashboard")}
-          className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900"
+          className="bg-indigo-700 text-white px-4 py-2 rounded hover:bg-indigo-800"
         >
           Back
         </button>
@@ -35,14 +35,16 @@ function FraudPage() {
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="border p-2 rounded"
+          className="border border-indigo-100 p-2.5 rounded-lg 
+  focus:ring-2 focus:ring-indigo-500 outline-none"
         />
 
         <input
           type="month"
           value={month}
           onChange={(e) => setMonth(e.target.value)}
-          className="border p-2 rounded"
+          className="border border-indigo-100 p-2.5 rounded-lg 
+  focus:ring-2 focus:ring-indigo-500 outline-none"
         />
 
         <button
@@ -50,8 +52,7 @@ function FraudPage() {
             setDate("");
             setMonth("");
           }}
-          className="bg-gray-300 px-4 py-2 rounded"
-        >
+          className="px-4 py-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition"        >
           Reset
         </button>
 
