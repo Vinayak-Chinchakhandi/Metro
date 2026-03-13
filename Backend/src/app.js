@@ -21,8 +21,9 @@ const fraudRoutes = require("./routes/fraudRoutes");
 const predictionRoutes = require("./routes/predictionRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const livePredictionRoutes = require("./routes/livePredictionRoutes");
+const analyticsRoutes = require("./routes/analyticsRoutes");
 
-
+app.use("/api/analytics", analyticsRoutes);
 app.use("/api/live-predictions", livePredictionRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/tickets", ticketRoutes);

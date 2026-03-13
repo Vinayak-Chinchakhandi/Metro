@@ -1,43 +1,62 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import DemandTrendChart from "../components/charts/DemandTrendChart";
-import StationDemandChart from "../components/charts/StationDemandChart";
 import FraudPieChart from "../components/charts/FraudPieChart";
+import TopStationsChart from "../components/charts/TopStationsChart";
+
+import {
+  getKPI,
+  getFraudStats,
+  getTopStations
+} from "../services/dashboardService";
 
 function Dashboard() {
 
   const navigate = useNavigate();
+
+  const [kpi, setKpi] = useState({
+    totalTickets: 0,
+    fraudAlerts: 0,
+    activeStations: 0
+  });
+
+  const [fraudData, setFraudData] = useState([]);
+  const [topStations, setTopStations] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState("");
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+
+    try {
+
+      const kpiData = await getKPI();
+      const fraudStats = await getFraudStats();
+      const stations = await getTopStations();
+
+      setKpi(kpiData);
+      setFraudData(fraudStats);
+      setTopStations(stations);
+
+      setLastUpdated(new Date().toLocaleTimeString());
+
+    } catch (err) {
+      console.error("Dashboard fetch error:", err);
+    }
+
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("adminAuth");
     window.location.href = "/";
   };
 
-  const demandTrendData = [
-    { hour: "6", demand: 200 },
-    { hour: "7", demand: 450 },
-    { hour: "8", demand: 900 },
-    { hour: "9", demand: 700 },
-    { hour: "10", demand: 650 },
-  ];
-
-  const stationDemandData = [
-    { station: "Majestic", demand: 11000 },
-    { station: "MG Road", demand: 9800 },
-    { station: "Indiranagar", demand: 8700 },
-    { station: "Yeshwantpur", demand: 8200 },
-  ];
-
-  const fraudData = [
-    { name: "Normal", value: 950 },
-    { name: "Fraud", value: 50 },
-  ];
-
   return (
     <div className="p-8">
 
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-2">
 
         <h1 className="text-3xl font-bold">
           Admin Dashboard
@@ -52,48 +71,45 @@ function Dashboard() {
 
       </div>
 
+      <p className="text-sm text-gray-500 mb-6">
+        🟢 System Online | Last Updated: {lastUpdated}
+      </p>
+
 
       {/* KPI CARDS */}
 
-      <div className="grid grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-3 gap-6 mb-8">
 
         <div className="bg-white shadow rounded p-4 border-l-4 border-blue-500">
           <h3 className="text-gray-500 text-sm">Total Tickets Today</h3>
-          <p className="text-2xl font-bold">1,245</p>
+          <p className="text-2xl font-bold">{kpi.totalTickets}</p>
         </div>
 
         <div className="bg-white shadow rounded p-4 border-l-4 border-red-500">
           <h3 className="text-gray-500 text-sm">Fraud Alerts</h3>
-          <p className="text-2xl font-bold">32</p>
+          <p className="text-2xl font-bold">{kpi.fraudAlerts}</p>
         </div>
 
         <div className="bg-white shadow rounded p-4 border-l-4 border-green-500">
           <h3 className="text-gray-500 text-sm">Active Stations</h3>
-          <p className="text-2xl font-bold">83</p>
-        </div>
-
-        <div className="bg-white shadow rounded p-4 border-l-4 border-purple-500">
-          <h3 className="text-gray-500 text-sm">Peak Demand</h3>
-          <p className="text-2xl font-bold">11,000</p>
+          <p className="text-2xl font-bold">{kpi.activeStations}</p>
         </div>
 
       </div>
 
 
-      {/* ANALYTICS CHARTS */}
+      {/* CHARTS */}
 
-      <div className="grid grid-cols-3 gap-6 mb-10">
-
-        <DemandTrendChart data={demandTrendData} />
-
-        <StationDemandChart data={stationDemandData} />
+      <div className="grid grid-cols-2 gap-6 mb-10">
 
         <FraudPieChart data={fraudData} />
 
+        <TopStationsChart data={topStations} />
+
       </div>
 
 
-      {/* NAVIGATION BUTTONS */}
+      {/* NAVIGATION */}
 
       <div className="flex gap-4">
 
