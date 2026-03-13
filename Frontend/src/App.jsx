@@ -12,7 +12,7 @@ import StationsPage from "./pages/StationsPage";
 import NetworkMap from "./pages/NetworkMap";
 import EntryScan from "./pages/EntryScan";
 import ExitScan from "./pages/ExitScan";
-
+import AdminLoginPage from "./pages/AdminLoginPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -29,6 +29,8 @@ function App() {
           <Route path="/book" element={<BookTicket />} />
 
           <Route path="/ticket" element={<TicketResult />} />
+
+          <Route path="/admin/login" element={<AdminLoginPage />} />
 
           <Route
             path="/dashboard"
