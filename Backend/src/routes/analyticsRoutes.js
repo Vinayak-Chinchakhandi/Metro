@@ -9,7 +9,7 @@ router.get("/kpi", (req, res) => {
   db.get(
     `SELECT COUNT(*) AS totalTickets
      FROM tickets
-     WHERE DATE(booking_time) = DATE('now')`,
+     WHERE DATE(booking_time) = DATE('now','localtime')`,
     [],
     (err, row) => {
 
@@ -20,7 +20,7 @@ router.get("/kpi", (req, res) => {
       db.get(
         `SELECT COUNT(*) AS fraudAlerts
          FROM fraud_alerts
-         WHERE DATE(created_at) = DATE('now')`,
+         WHERE DATE(created_at) = DATE('now','localtime')`,
         [],
         (err, row) => {
 
@@ -58,7 +58,7 @@ router.get("/fraud-stats", (req, res) => {
   db.get(
     `SELECT COUNT(*) AS fraud
      FROM fraud_alerts
-     WHERE DATE(created_at)=DATE('now')`,
+     WHERE DATE(created_at)=DATE('now','localtime')`,
     [],
     (err, row) => {
 
@@ -69,7 +69,7 @@ router.get("/fraud-stats", (req, res) => {
       db.get(
         `SELECT COUNT(*) AS tickets
          FROM tickets
-         WHERE DATE(booking_time)=DATE('now')`,
+         WHERE DATE(booking_time)=DATE('now','localtime')`,
         [],
         (err, row) => {
 
@@ -96,7 +96,7 @@ router.get("/top-stations", (req, res) => {
     `SELECT source_station AS station,
             COUNT(*) AS trips
      FROM tickets
-     WHERE DATE(booking_time)=DATE('now')
+     WHERE DATE(booking_time)=DATE('now','localtime')
      GROUP BY source_station
      ORDER BY trips DESC
      LIMIT 5`,
