@@ -1,3 +1,4 @@
+import api from "./api";
 import axios from "axios";
 
 const API = "http://localhost:5000/api/analytics";
@@ -14,5 +15,10 @@ export const getFraudStats = async () => {
 
 export const getTopStations = async () => {
   const res = await axios.get(`${API}/top-stations`);
+  return res.data;
+};
+
+export const getTopFraudStations = async () => {
+  const res = await api.get("/analytics/top-fraud-stations");
   return res.data;
 };

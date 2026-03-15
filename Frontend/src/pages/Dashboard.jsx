@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 
 import FraudPieChart from "../components/charts/FraudPieChart";
 import TopStationsChart from "../components/charts/TopStationsChart";
+import TopFraudStationsChart from "../components/charts/TopFraudStationsChart";
 
 import {
   getKPI,
   getFraudStats,
-  getTopStations
+  getTopStations,
+  getTopFraudStations
 } from "../services/dashboardService";
 
 function Dashboard() {
@@ -23,6 +25,7 @@ function Dashboard() {
   const [fraudData, setFraudData] = useState([]);
   const [topStations, setTopStations] = useState([]);
   const [lastUpdated, setLastUpdated] = useState("");
+  const [fraudStations, setFraudStations] = useState([]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -35,16 +38,18 @@ function Dashboard() {
 
     try {
 
-      const [kpiData, fraudStats, stations] = await Promise.all([
+      const [kpiData, fraudStats, stations, fraudStationData] = await Promise.all([
         getKPI(),
         getFraudStats(),
-        getTopStations()
+        getTopStations(),
+        getTopFraudStations()
       ]);
 
 
       setKpi(kpiData);
       setFraudData(fraudStats);
       setTopStations(stations);
+      setFraudStations(fraudStationData);
 
       setLastUpdated(new Date().toLocaleTimeString());
 
@@ -129,11 +134,31 @@ function Dashboard() {
 
       {/* CHARTS */}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
 
-        <FraudPieChart data={fraudData} />
+        {fraudData.length === 0 ? (
+          <div className="bg-white p-6 rounded-xl shadow-sm border min-h-[260px] flex items-center justify-center text-gray-500">
+            No fraud data available today
+          </div>
+        ) : (
+          <FraudPieChart data={fraudData} />
+        )}
 
-        <TopStationsChart data={topStations} />
+        {topStations.length === 0 ? (
+          <div className="bg-white p-6 rounded-xl shadow-sm border min-h-[260px] flex items-center justify-center text-gray-500">
+            No station trip data today
+          </div>
+        ) : (
+          <TopStationsChart data={topStations} />
+        )}
+
+        {fraudStations.length === 0 ? (
+          <div className="bg-white p-6 rounded-xl shadow-sm border min-h-[260px] flex items-center justify-center text-gray-500">
+            No fraud stations today
+          </div>
+        ) : (
+          <TopFraudStationsChart data={fraudStations} />
+        )}
 
       </div>
 

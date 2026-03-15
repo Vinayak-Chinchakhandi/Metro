@@ -4,7 +4,8 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
+  CartesianGrid
 } from "recharts";
 
 function TopStationsChart({ data }) {
@@ -21,32 +22,25 @@ function TopStationsChart({ data }) {
         <BarChart
           data={data}
           layout="vertical"
-          margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
+          margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
         >
 
-          <XAxis
-            type="number"
-            tick={{ fill: "#475569", fontSize: 12 }}
-          />
+          <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+
+          <XAxis type="number" />
 
           <YAxis
             type="category"
             dataKey="station"
-            width={120}
-            tick={{ fill: "#475569", fontSize: 12 }}
+            width={80}
           />
 
-          <Tooltip
-            contentStyle={{
-              borderRadius: "8px",
-              border: "1px solid #E0E7FF"
-            }}
-          />
+          <Tooltip />
 
           <Bar
             dataKey="trips"
             fill="#6366F1"
-            radius={[4, 4, 4, 4]}
+            radius={[4,4,4,4]}
           />
 
         </BarChart>
@@ -55,7 +49,6 @@ function TopStationsChart({ data }) {
 
     </div>
   );
-
 }
 
 export default TopStationsChart;

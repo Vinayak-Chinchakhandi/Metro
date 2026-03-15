@@ -112,4 +112,31 @@ router.get("/top-stations", (req, res) => {
 
 });
 
+router.get("/top-fraud-stations", (req, res) => {
+
+  db.all(
+    `SELECT t.source_station AS station,
+            COUNT(*) AS frauds
+     FROM fraud_alerts f
+     JOIN tickets t
+     ON f.ticket_id = t.id
+     WHERE DATE(f.created_at) = DATE('now','localtime')
+     GROUP BY t.source_station
+     ORDER BY frauds DESC
+     LIMIT 5`,
+    [],
+    (err, rows) => {
+
+      if (err) {
+        console.error("Top fraud stations error:", err);
+        return res.status(500).json(err);
+      }
+
+      res.json(rows);
+
+    }
+  );
+
+});
+
 module.exports = router;

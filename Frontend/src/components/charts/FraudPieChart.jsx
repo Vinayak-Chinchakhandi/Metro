@@ -1,6 +1,4 @@
-import { PieChart, Pie, Tooltip, Cell, Legend } from "recharts";
-
-const COLORS = ["#6366F1", "#4338CA"]; // Indigo AI colors
+import { PieChart, Pie, Tooltip, Cell, Legend, ResponsiveContainer } from "recharts";
 
 function FraudPieChart({ data }) {
 
@@ -11,37 +9,41 @@ function FraudPieChart({ data }) {
         Fraud Distribution
       </h3>
 
-      <PieChart width={420} height={250}>
+      <ResponsiveContainer width="100%" height={250}>
 
-        <Pie
-          data={data}
-          dataKey="value"
-          nameKey="name"
-          outerRadius={90}
-          cx="35%"
-        >
-          {data.map((entry, index) => (
-            <Cell
-              key={index}
-              fill={entry.name === "Fraud" ? "#EF4444" : "#6366F1"}
-            />
-          ))}
-        </Pie>
+        <PieChart>
 
-        <Tooltip
-          contentStyle={{
-            borderRadius: "8px",
-            border: "1px solid #E0E7FF",
-          }}
-        />
+          <Pie
+            data={data}
+            dataKey="value"
+            nameKey="name"
+            outerRadius={80}
+            cx="50%"
+            cy="45%"
+          >
+            {data.map((entry, index) => (
+              <Cell
+                key={index}
+                fill={entry.name === "Fraud" ? "#EF4444" : "#6366F1"}
+              />
+            ))}
+          </Pie>
 
-        <Legend
-          layout="vertical"
-          align="right"
-          verticalAlign="middle"
-        />
+          <Tooltip
+            contentStyle={{
+              borderRadius: "8px",
+              border: "1px solid #E0E7FF",
+            }}
+          />
 
-      </PieChart>
+          <Legend
+            verticalAlign="bottom"
+            height={36}
+          />
+
+        </PieChart>
+
+      </ResponsiveContainer>
 
     </div>
   );
